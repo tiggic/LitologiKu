@@ -1,0 +1,85 @@
+{
+  "name": "LitologiKu Pro",
+  "short_name": "LitologiKu",
+  "description": "Aplikasi Deskripsi Batuan Lapangan Lengkap berdasarkan Standar IUGS - Teknik Geologi UIR",
+  "start_url": "./LitologiKu_Pro_6.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1c1917",
+  "theme_color": "#1c1917",
+  "categories": ["education", "productivity", "utilities"],
+  "lang": "id",
+  "icons": [
+    {
+      "src": "icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Input Batuan Beku",
+      "short_name": "Beku",
+      "description": "Langsung ke form input batuan beku",
+      "url": "./LitologiKu_Pro_6.html#beku",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Input Batuan Sedimen",
+      "short_name": "Sedimen",
+      "description": "Langsung ke form input batuan sedimen",
+      "url": "./LitologiKu_Pro_6.html#sedimen",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Lihat Data",
+      "short_name": "Data",
+      "description": "Lihat semua data lapangan",
+      "url": "./LitologiKu_Pro_6.html#data",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}

@@ -1,0 +1,3332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LitologiKu Pro - Aplikasi Deskripsi Batuan Lapangan Lengkap berdasarkan Standar IUGS">
+    <title>LitologiKu Pro - Deskripsi Geologi Lapangan | Teknik Geologi UIR</title>
+
+    <!-- ═══ PWA META ═══ -->
+    <meta name="theme-color" content="#1c1917">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LitologiKu Pro">
+    <meta name="application-name" content="LitologiKu Pro">
+    <meta name="msapplication-TileColor" content="#1c1917">
+    <meta name="msapplication-TileImage" content="icons/icon-144.png">
+
+    <!-- ═══ PWA MANIFEST ═══ -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- ═══ APPLE TOUCH ICONS ═══ -->
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+
+    <!-- ═══ FAVICON ═══ -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96.png">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --stone-50: #fafaf9;
+            --stone-100: #f5f5f4;
+            --stone-200: #e7e5e4;
+            --stone-300: #d6d3d1;
+            --stone-400: #a8a29e;
+            --stone-500: #78716c;
+            --stone-600: #57534e;
+            --stone-700: #44403c;
+            --stone-800: #292524;
+            --stone-900: #1c1917;
+            --stone-950: #0c0a09;
+
+            --amber-50: #fffbeb;
+            --amber-100: #fef3c7;
+            --amber-200: #fde68a;
+            --amber-300: #fcd34d;
+            --amber-400: #fbbf24;
+            --amber-500: #f59e0b;
+            --amber-600: #d97706;
+
+            --emerald-50: #ecfdf5;
+            --emerald-100: #d1fae5;
+            --emerald-500: #10b981;
+            --emerald-600: #059669;
+            --emerald-700: #047857;
+
+            --sky-50: #f0f9ff;
+            --sky-100: #e0f2fe;
+            --sky-500: #0ea5e9;
+            --sky-600: #0284c7;
+
+            --rose-50: #fff1f2;
+            --rose-100: #ffe4e6;
+            --rose-500: #f43f5e;
+            --rose-600: #e11d48;
+
+            --violet-50: #f5f3ff;
+            --violet-500: #8b5cf6;
+
+            --radius: 10px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 48px rgba(0,0,0,0.15);
+
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: var(--font-body);
+            line-height: 1.6;
+            color: var(--stone-800);
+            background: var(--stone-100);
+            min-height: 100vh;
+        }
+
+        /* ═══════════ HEADER ═══════════ */
+        header {
+            background: var(--stone-900);
+            color: white;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--amber-500);
+        }
+
+        .header-top {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--amber-400), var(--amber-600));
+            border-radius: 8px;
+            display: grid; place-items: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px rgba(251,191,36,0.3);
+        }
+
+        .logo span { color: var(--amber-400); }
+
+        .logo-sub {
+            font-family: var(--font-body);
+            font-size: 0.65rem;
+            font-weight: 400;
+            opacity: 0.5;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            display: block;
+            margin-top: -2px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none; border: none;
+            color: white; font-size: 1.5rem;
+            cursor: pointer; padding: 0.25rem;
+        }
+
+        nav {
+            background: var(--stone-800);
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        nav ul {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            list-style: none;
+            display: flex;
+            gap: 0;
+        }
+
+        nav button {
+            background: transparent;
+            color: var(--stone-400);
+            border: none;
+            padding: 0.7rem 1.1rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        nav button:hover { color: white; background: rgba(255,255,255,0.04); }
+
+        nav button.active {
+            color: var(--amber-400);
+            border-bottom-color: var(--amber-400);
+            background: rgba(251,191,36,0.06);
+        }
+
+        /* ═══════════ LAYOUT ═══════════ */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 3rem;
+        }
+
+        /* ═══════════ CARDS ═══════════ */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--stone-200);
+            animation: cardIn 0.4s ease both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--stone-900);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--stone-200);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card h2 .icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: grid; place-items: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--stone-700);
+            margin: 1.5rem 0 0.75rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+
+        .card h3::before {
+            content: '';
+            width: 3px; height: 14px;
+            background: var(--amber-500);
+            border-radius: 2px;
+        }
+
+        /* ═══════════ FORM ═══════════ */
+        .form-group { margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 500;
+            color: var(--stone-700);
+            font-size: 0.85rem;
+        }
+
+        label.required::after { content: " *"; color: var(--rose-500); font-weight: 700; }
+
+        .label-hint {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--stone-400);
+            margin-left: 0.25rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1.5px solid var(--stone-300);
+            border-radius: 7px;
+            font-size: 0.9rem;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            background: white;
+            color: var(--stone-800);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--amber-500);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        .grid { display: grid; gap: 0.75rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+        /* ═══════════ CHIPS (checkbox/radio) ═══════════ */
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.3rem;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.75rem;
+            background: var(--stone-100);
+            border: 1.5px solid var(--stone-200);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--stone-600);
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .chip:hover { border-color: var(--amber-400); background: var(--amber-50); color: var(--stone-800); }
+
+        .chip input { display: none; }
+
+        .chip:has(input:checked) {
+            background: var(--amber-100);
+            border-color: var(--amber-500);
+            color: var(--stone-900);
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(245,158,11,0.15);
+        }
+
+        /* ═══════════ BUTTONS ═══════════ */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-primary { background: var(--stone-900); color: white; }
+        .btn-primary:hover { background: var(--stone-800); box-shadow: var(--shadow-md); }
+
+        .btn-accent { background: var(--amber-500); color: var(--stone-900); }
+        .btn-accent:hover { background: var(--amber-400); box-shadow: var(--shadow-md); }
+
+        .btn-success { background: var(--emerald-600); color: white; }
+        .btn-success:hover { background: var(--emerald-700); }
+
+        .btn-danger { background: var(--rose-500); color: white; }
+        .btn-danger:hover { background: var(--rose-600); }
+
+        .btn-outline {
+            background: white;
+            color: var(--stone-700);
+            border: 1.5px solid var(--stone-300);
+        }
+        .btn-outline:hover { border-color: var(--stone-500); background: var(--stone-50); }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        /* ═══════════ SECTIONS ═══════════ */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.35s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .field-section {
+            background: var(--stone-50);
+            border: 1.5px solid var(--stone-200);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .field-section h3 { margin-top: 0; }
+
+        /* ═══════════ GPS BOX ═══════════ */
+        .gps-box {
+            background: linear-gradient(135deg, var(--sky-50), var(--sky-100));
+            border: 1.5px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.75rem 0;
+        }
+
+        .coord-display {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            background: white;
+            padding: 0.4rem 0.6rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            font-weight: 500;
+            color: var(--sky-600);
+        }
+
+        /* ═══════════ IMAGE UPLOAD ═══════════ */
+        .upload-zone {
+            border: 2px dashed var(--stone-300);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            background: var(--stone-50);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-zone:hover { border-color: var(--amber-400); background: var(--amber-50); }
+        .upload-zone.dragover { border-color: var(--emerald-500); background: var(--emerald-50); }
+
+        .upload-zone .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .upload-zone p { font-size: 0.85rem; color: var(--stone-500); }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            margin-top: 0.75rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .image-info {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--stone-400);
+            margin-top: 0.4rem;
+        }
+
+        /* ═══════════ RESULT BOX ═══════════ */
+        .result-box {
+            background: var(--stone-900);
+            color: #e5e5e5;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            white-space: pre-wrap;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--stone-700);
+        }
+
+        .result-header span {
+            font-weight: 600;
+            color: var(--amber-400);
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        .copy-btn {
+            background: var(--stone-700);
+            color: var(--stone-300);
+            border: none;
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: var(--font-body);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover { background: var(--stone-600); color: white; }
+
+        /* ═══════════ STATS ═══════════ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .stat {
+            background: var(--stone-900);
+            color: white;
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--amber-400);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--stone-400);
+            margin-top: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* ═══════════ TABLE ═══════════ */
+        .table-wrap { overflow-x: auto; margin-top: 1rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        thead { background: var(--stone-100); }
+
+        th {
+            padding: 0.6rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--stone-600);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--stone-200);
+        }
+
+        td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--stone-100);
+            color: var(--stone-700);
+        }
+
+        tr:hover td { background: var(--stone-50); }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .badge-beku { background: #fee2e2; color: #991b1b; }
+        .badge-sedimen { background: var(--amber-100); color: #92400e; }
+        .badge-metamorf { background: #e0e7ff; color: #3730a3; }
+
+        /* ═══════════ EXPORT ═══════════ */
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .export-card {
+            border: 1.5px solid var(--stone-200);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .export-card:hover {
+            border-color: var(--amber-500);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .export-card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .export-card h4 { font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .export-card p { font-size: 0.75rem; color: var(--stone-400); }
+
+        /* ═══════════ MODAL ═══════════ */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalPop 0.25s ease;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--stone-200);
+        }
+
+        .modal-header h2 { margin: 0; border: none; padding: 0; }
+
+        .close-btn {
+            background: var(--stone-100);
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--stone-500);
+            display: grid; place-items: center;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover { background: var(--rose-100); color: var(--rose-500); }
+
+        /* ═══════════ ALERTS ═══════════ */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 7px;
+            margin: 0.75rem 0;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-info { background: var(--sky-50); color: #075985; border: 1px solid #bae6fd; }
+        .alert-success { background: var(--emerald-50); color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-warning { background: var(--amber-50); color: #92400e; border: 1px solid var(--amber-200); }
+        .alert-error { background: var(--rose-50); color: #9f1239; border: 1px solid #fecdd3; }
+
+        /* ═══════════ TOOLTIPS ═══════════ */
+        .tip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--stone-200);
+            color: var(--stone-500);
+            font-size: 0.6rem;
+            font-weight: 700;
+            cursor: help;
+            position: relative;
+            vertical-align: middle;
+            margin-left: 0.25rem;
+        }
+
+        .tip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--stone-900);
+            color: white;
+            padding: 0.4rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 400;
+            white-space: nowrap;
+            max-width: 260px;
+            white-space: normal;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            line-height: 1.4;
+        }
+
+        .tip:hover::after { opacity: 1; }
+
+        /* ═══════════ QUICK NAV (HOME) ═══════════ */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .quick-card {
+            border: 1.5px solid var(--stone-200);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            text-align: center;
+        }
+
+        .quick-card:hover {
+            border-color: var(--amber-400);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .quick-card .qicon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-card h4 { font-size: 0.95rem; color: var(--stone-800); }
+        .quick-card p { font-size: 0.75rem; color: var(--stone-500); margin-top: 0.25rem; }
+
+        /* ═══════════ REF PANEL ═══════════ */
+        .ref-note {
+            font-size: 0.72rem;
+            color: var(--stone-400);
+            font-style: italic;
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid var(--stone-200);
+        }
+
+        /* ═══════════ RESPONSIVE ═══════════ */
+        @media (max-width: 768px) {
+            .mobile-toggle { display: block; }
+            nav ul { display: none; flex-direction: column; padding: 0; }
+            nav ul.show { display: flex; }
+            nav button { width: 100%; text-align: left; padding: 0.75rem 1.25rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .card { padding: 1.25rem; }
+            .container { padding: 1rem 0.75rem; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+
+        @media print {
+            header, nav, .btn, footer, .no-print { display: none !important; }
+            .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+            body { background: white; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* ═══════════ PWA INSTALL BANNER ═══════════ */
+        #pwa-install-banner {
+            display: none;
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5000;
+            background: var(--stone-900);
+            color: white;
+            border: 1.5px solid var(--amber-500);
+            border-radius: 12px;
+            padding: 0.9rem 1.25rem;
+            box-shadow: var(--shadow-xl);
+            max-width: 400px;
+            width: calc(100% - 2rem);
+            animation: slideUp 0.4s ease;
+        }
+        #pwa-install-banner.show { display: flex; align-items: center; gap: 0.75rem; }
+        @keyframes slideUp { from { opacity:0; transform: translate(-50%, 20px); } to { opacity:1; transform: translate(-50%, 0); } }
+        #pwa-install-banner .pwa-icon { font-size: 2rem; flex-shrink: 0; }
+        #pwa-install-banner .pwa-text { flex: 1; }
+        #pwa-install-banner .pwa-text strong { display: block; font-size: 0.9rem; color: var(--amber-400); margin-bottom: 0.15rem; }
+        #pwa-install-banner .pwa-text span { font-size: 0.78rem; color: var(--stone-400); }
+        #pwa-install-btn {
+            background: var(--amber-500); color: var(--stone-900);
+            border: none; border-radius: 7px;
+            padding: 0.45rem 0.9rem;
+            font-weight: 700; font-size: 0.82rem;
+            cursor: pointer; white-space: nowrap;
+            font-family: var(--font-body);
+        }
+        #pwa-install-btn:hover { background: var(--amber-400); }
+        #pwa-dismiss-btn {
+            background: none; border: none; color: var(--stone-500);
+            font-size: 1.1rem; cursor: pointer; padding: 0.2rem; line-height: 1;
+        }
+        #pwa-dismiss-btn:hover { color: white; }
+        #pwa-update-banner {
+            display: none;
+            position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+            z-index: 5000;
+            background: #0284c7; color: white;
+            border-radius: 10px; padding: 0.75rem 1.25rem;
+            box-shadow: var(--shadow-xl); font-size: 0.85rem;
+            gap: 0.75rem; align-items: center;
+            max-width: 380px; width: calc(100% - 2rem);
+        }
+        #pwa-update-banner.show { display: flex; }
+        #pwa-update-btn {
+            background: white; color: #075985;
+            border: none; border-radius: 6px;
+            padding: 0.35rem 0.8rem; font-weight: 700;
+            cursor: pointer; font-size: 0.8rem; white-space: nowrap;
+            font-family: var(--font-body);
+        }
+        #offline-pill {
+            display: none;
+            position: fixed; top: 0.5rem; left: 50%; transform: translateX(-50%);
+            z-index: 4999;
+            background: #e11d48; color: white;
+            border-radius: 20px; padding: 0.3rem 1rem;
+            font-size: 0.78rem; font-weight: 600;
+            gap: 0.4rem; align-items: center;
+        }
+        #offline-pill.show { display: flex; }
+
+        /* ═══════════ FOOTER ═══════════ */
+        footer {
+            background: var(--stone-900);
+            color: var(--stone-400);
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            line-height: 1.8;
+        }
+
+        footer strong { color: var(--amber-400); }
+
+        /* ═══════════ TOAST ═══════════ */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--stone-900);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-xl);
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toast.success { border-left: 3px solid var(--emerald-500); }
+        .toast.error { border-left: 3px solid var(--rose-500); }
+        .toast.info { border-left: 3px solid var(--sky-500); }
+
+        @keyframes toastIn { from { opacity:0; transform: translateX(30px); } to { opacity:1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity:1; } to { opacity:0; transform: translateY(-10px); } }
+
+        /* ═══════════ LOADING ═══════════ */
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══════════ ROCK NAME SUGGESTION ═══════════ */
+        .suggestion-box {
+            background: linear-gradient(135deg, var(--amber-50), var(--amber-100));
+            border: 1.5px solid var(--amber-300);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .suggestion-box h4 {
+            font-size: 0.85rem;
+            color: var(--amber-600);
+            margin-bottom: 0.4rem;
+        }
+
+        .suggestion-name {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--stone-900);
+        }
+
+        .suggestion-basis {
+            font-size: 0.75rem;
+            color: var(--stone-500);
+            margin-top: 0.25rem;
+        }
+        /* Style untuk Tabel Data */
+        #data-table th {
+            background-color: #e9ecef;
+            color: #333;
+            user-select: none;
+            position: relative;
+        }
+        #data-table th:hover {
+            background-color: #dde2e6;
+        }
+        #data-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        #data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        #data-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Sortable headers */
+        .sortable {
+            cursor: pointer;
+        }
+
+        /* Indikator Panah Sortir */
+        .th-sort-asc::after {
+            content: " ▲";
+            font-size: 0.8em;
+            color: #007bff;
+        }
+        .th-sort-desc::after {
+            content: " ▼";
+            font-size: 0.8em;
+            color: #007bff;
+        }
+
+        /* Stats Box */
+        .stats-container {
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .stat-box {
+            background: #eee;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<header>
+    <div class="header-top">
+        <a class="logo" href="#" onclick="showSection('home');return false;">
+            <div class="logo-icon">⛏️</div>
+            <div>
+                Litologi<span>Ku</span> <span class="logo-sub" style="color:var(--stone-400)">Pro</span>
+                <span class="logo-sub">Teknik Geologi UIR</span>
+            </div>
+        </a>
+        <button class="mobile-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+    <nav>
+        <ul id="navMenu">
+            <li><button onclick="showSection('home')" class="active" data-section="home">Beranda</button></li>
+            <li><button onclick="showSection('beku')" data-section="beku">🔥 Beku</button></li>
+            <li><button onclick="showSection('sedimen')" data-section="sedimen">📚 Sedimen</button></li>
+            <li><button onclick="showSection('metamorf')" data-section="metamorf">💎 Metamorf</button></li>
+            <li><button onclick="showSection('data')" data-section="data">📊 Data</button></li>
+            <li><button onclick="showSection('export')" data-section="export">📤 Export</button></li>
+            <li><button onclick="showSection('referensi')" data-section="referensi">📖 Referensi</button></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="container">
+
+    <!-- ═══════════ HOME ═══════════ -->
+    <div id="home" class="section active">
+        <div class="card">
+            <h2><div class="icon" style="background:var(--amber-100);">⛏️</div> LitologiKu Pro</h2>
+            <p style="color:var(--stone-500); font-size:0.9rem; margin-bottom:1rem;">
+                Aplikasi deskripsi batuan lapangan berstandar IUGS, dikembangkan untuk mahasiswa dan geolog lapangan oleh <strong>Teknik Geologi — Universitas Islam Riau</strong>.
+            </p>
+            <div class="alert alert-info">
+                ℹ️ Data tersimpan di IndexedDB browser (offline). Gunakan fitur Export untuk backup.
+            </div>
+            <div class="stats-row" id="homeStats">
+                <div class="stat"><div class="stat-num" id="totalData">0</div><div class="stat-label">Total Data</div></div>
+                <div class="stat"><div class="stat-num" id="totalImages">0</div><div class="stat-label">Foto</div></div>
+                <div class="stat"><div class="stat-num" id="dbSize">0 MB</div><div class="stat-label">Ukuran DB</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><div class="icon" style="background:var(--emerald-100);">🧭</div> Mulai Deskripsi</h2>
+            <div class="quick-grid">
+                <div class="quick-card" onclick="showSection('beku')">
+                    <div class="qicon">🔥</div>
+                    <h4>Batuan Beku</h4>
+                    <p>Klasifikasi IUGS/QAPF, tekstur, mineral</p>
+                </div>
+                <div class="quick-card" onclick="showSection('sedimen')">
+                    <div class="qicon">📚</div>
+                    <h4>Batuan Sedimen</h4>
+                    <p>Skala Wentworth, Dunham, Folk</p>
+                </div>
+                <div class="quick-card" onclick="showSection('metamorf')">
+                    <div class="qicon">💎</div>
+                    <h4>Batuan Metamorf</h4>
+                    <p>Foliasi, non-foliasi, fasies metamorf</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ BATUAN BEKU ═══════════ -->
+    <div id="beku" class="section">
+        <div class="card">
+            <h2><div class="icon" style="background:#fee2e2;">🔥</div> Deskripsi Batuan Beku</h2>
+            <p class="ref-note">Referensi: IUGS Subcommission (Streckeisen, 1976; Le Maitre et al., 2002) — Klasifikasi QAPF</p>
+
+            <form id="formBeku" onsubmit="return false;">
+                <!-- LOKASI -->
+                <div class="field-section">
+                    <h3>📍 Informasi Lokasi & Singkapan</h3>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="required">Nama Lokasi / Station</label>
+                            <input type="text" id="beku_lokasi_nama" placeholder="Cth: ST-01, Sungai Kampar Kiri">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Pengamatan</label>
+                            <input type="date" id="beku_lokasi_tanggal">
+                        </div>
+                    </div>
+
+                    <div class="gps-box">
+                        <label style="font-weight:600; color:var(--sky-600);">📍 Koordinat GPS</label>
+                        <div class="grid grid-2" style="margin-top:0.5rem;">
+                            <div class="form-group">
+                                <label>Lintang (Lattitude)</label>
+                                <input type="number" step="0.000001" id="beku_lokasi_lat" placeholder="0.507068">
+                            </div>
+                            <div class="form-group">
+                                <label>Bujur (Longitude)</label>
+                                <input type="number" step="0.000001" id="beku_lokasi_lng" placeholder="101.447779">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('beku')" style="font-size:0.8rem;">📡 Ambil GPS Otomatis</button>
+                        <div id="beku_coordDisplay" class="coord-display hidden"></div>
+                    </div>
+
+                    <div class="grid grid-3">
+                        <div class="form-group">
+                            <label>Cuaca</label>
+                            <select id="beku_lokasi_cuaca">
+                                <option value="">Pilih...</option>
+                                <option>Cerah</option><option>Cerah Berawan</option><option>Berawan</option>
+                                <option>Mendung</option><option>Hujan Ringan</option><option>Hujan Sedang</option><option>Hujan Lebat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Elevasi (mdpl)</label>
+                            <input type="number" id="beku_lokasi_elevasi" placeholder="125">
+                        </div>
+                        <div class="form-group">
+                            <label>Metode Traverse</label>
+                            <select id="beku_lokasi_traverse">
+                                <option value="">Pilih...</option>
+                                <option>Sungai</option><option>Jalan</option><option>Bukit/Lereng</option><option>Pantai</option><option>Tambang/Galian</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Dimensi Singkapan (P × L × T) meter</label>
+                            <input type="text" id="beku_lokasi_dimensi" placeholder="Cth: 5 × 3 × 2">
+                        </div>
+                        <div class="form-group">
+                            <label>Kenampakan Tubuh Batuan <span class="tip" data-tip="Bentuk geometri badan batuan di singkapan">?</span></label>
+                            <select id="beku_lokasi_tubuh">
+                                <option value="">Pilih...</option>
+                                <option>Massif</option><option>Dike/Retas</option><option>Sill</option>
+                                <option>Stock</option><option>Batholit</option><option>Laccolith</option>
+                                <option>Lava Flow</option><option>Pyroclastic Flow</option><option>Plug/Neck</option>
+                                <option>Lopolith</option><option>Berlapis</option><option>Lainnya</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Derajat Pelapukan <span class="tip" data-tip="BS 5930: Fresh → Completely Weathered">?</span></label>
+                            <select id="beku_lokasi_pelapukan">
+                                <option value="">Pilih...</option>
+                                <option value="Fresh (I)">Fresh (I) — Tidak ada tanda pelapukan</option>
+                                <option value="Slightly Weathered (II)">Slightly Weathered (II) — Sedikit discolouration</option>
+                                <option value="Moderately Weathered (III)">Moderately Weathered (III) — Kurang dari 50% terlapukan</option>
+                                <option value="Highly Weathered (IV)">Highly Weathered (IV) — Lebih dari 50% terlapukan</option>
+                                <option value="Completely Weathered (V)">Completely Weathered (V) — Seluruh mineral terubah, struktur masih terlihat</option>
+                                <option value="Residual Soil (VI)">Residual Soil (VI) — Seluruh batuan menjadi tanah</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kekerasan <span class="tip" data-tip="Skala Mohs relatif, pengujian lapangan dengan palu & pisau">?</span></label>
+                            <select id="beku_lokasi_kekerasan">
+                                <option value="">Pilih...</option>
+                                <option>Sangat Lunak (dapat digores kuku)</option>
+                                <option>Lunak (digores pisau mudah)</option>
+                                <option>Sedang (digores pisau sulit)</option>
+                                <option>Keras (tidak dapat digores pisau)</option>
+                                <option>Sangat Keras (sulit dipecah palu)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Foto Singkapan</label>
+                        <div class="upload-zone" onclick="document.getElementById('beku_foto').click()"
+                             ondrop="handleDrop(event,'beku')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="icon">📸</div>
+                            <p>Klik atau drag & drop foto (JPG/PNG, max 5MB)</p>
+                            <input type="file" id="beku_foto" accept="image/*" class="hidden" onchange="handleImageUpload(event,'beku')">
+                        </div>
+                        <div id="beku_imagePreviewContainer" class="hidden">
+                            <img id="beku_imagePreview" class="image-preview" alt="Preview">
+                            <div class="image-info" id="beku_imageInfo"></div>
+                            <button type="button" class="btn btn-danger" onclick="removeImage('beku')" style="margin-top:0.5rem;font-size:0.78rem;">✕ Hapus Foto</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Catatan Lapangan</label>
+                        <textarea id="beku_lokasi_catatan" placeholder="Catatan lokasi, akses, kondisi singkapan..."></textarea>
+                    </div>
+                </div>
+
+                <!-- DESKRIPSI BATUAN BEKU -->
+                <div class="field-section">
+                    <h3>🔬 Deskripsi Megaskopis Batuan</h3>
+
+                    <div class="form-group">
+                        <label>Warna Batuan</label>
+                        <div class="grid grid-2">
+                            <div>
+                                <small style="color:var(--stone-400)">Warna Segar</small>
+                                <select id="beku_warna_segar">
+                                    <option value="">Pilih...</option>
+                                    <option>Putih</option><option>Abu-abu Terang</option><option>Abu-abu</option>
+                                    <option>Abu-abu Gelap</option><option>Hitam</option><option>Merah Muda</option>
+                                    <option>Merah</option><option>Coklat</option><option>Hijau</option>
+                                    <option>Hijau Gelap</option>
+                                </select>
+                            </div>
+                            <div>
+                                <small style="color:var(--stone-400)">Warna Lapuk</small>
+                                <select id="beku_warna_lapuk">
+                                    <option value="">Pilih...</option>
+                                    <option>Putih</option><option>Abu-abu</option><option>Coklat Muda</option>
+                                    <option>Coklat</option><option>Coklat Kemerahan</option><option>Kuning</option>
+                                    <option>Kuning Kecoklatan</option><option>Merah</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Struktur <span class="tip" data-tip="Kenampakan skala besar pada batuan (megaskopis)">?</span></label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Masif"> Masif</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Vesikuler"> Vesikuler</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Skoria"> Skoria</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Amigdaloidal"> Amigdaloidal</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Pillow Lava"> Pillow Lava</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Columnar Joint"> Columnar Joint</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Flow Structure"> Flow Structure</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Banded"> Banded</label>
+                            <label class="chip"><input type="checkbox" name="beku_struktur" value="Xenolith"> Xenolith</label>
+                        </div>
+                    </div>
+
+                    <h3>🔬 Tekstur</h3>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Derajat Kristalisasi <span class="tip" data-tip="Perbandingan material kristalin vs gelas">?</span></label>
+                            <select id="beku_kristalisasi">
+                                <option value="">Pilih...</option>
+                                <option value="Holokristalin">Holokristalin (100% kristal)</option>
+                                <option value="Hipokristalin">Hipokristalin (kristal + gelas)</option>
+                                <option value="Holohialin">Holohialin (100% gelas)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Granularitas <span class="tip" data-tip="Ukuran butir kristal rata-rata">?</span></label>
+                            <select id="beku_granularitas">
+                                <option value="">Pilih...</option>
+                                <option value="Fanerik Kasar">Fanerik Kasar (>5mm)</option>
+                                <option value="Fanerik Sedang">Fanerik Sedang (1-5mm)</option>
+                                <option value="Fanerik Halus">Fanerik Halus (0.5-1mm)</option>
+                                <option value="Afanitik">Afanitik (<0.5mm)</option>
+                                <option value="Gelasan">Gelasan (glass)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Hubungan Antar Kristal <span class="tip" data-tip="Relatif ukuran kristal satu sama lain (Inequigranular Porfiritik = Kontras tajam antara fenokris besar dan massa dasar yang jauh lebih halus); (Inequigranular Seriasi= Ukuran butir berubah secara bertahap/kontinu dari yang besar ke kecil, tanpa lompatan tajam)">?</span></label>
+                            <select id="beku_relasi_kristal">
+                                <option value="">Pilih...</option>
+                                <option value="Equigranular">Equigranular (seragam)</option>
+                                <option value="Inequigranular-Porfiritik">Inequigranular — Porfiritik</option>
+                                <option value="Inequigranular-Seriasi">Inequigranular — Seriasi</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Bentuk Kristal <span class="tip" data-tip="Derajat kesempurnaan bentuk kristal">?</span></label>
+                            <select id="beku_bentuk_kristal">
+                                <option value="">Pilih...</option>
+                                <option value="Euhedral (Idiomorfik)">Euhedral (Idiomorfik)</option>
+                                <option value="Subhedral (Hipidiomorfik)">Subhedral (Hipidiomorfik)</option>
+                                <option value="Anhedral (Allotriomorfik)">Anhedral (Allotriomorfik)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tekstur Khusus <span class="tip" data-tip="Tekstur spesifik yang teramati">?</span></label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Ofitik"> Ofitik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Sub-ofitik"> Sub-ofitik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Intergranular"> Intergranular</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Intersertal"> Intersertal</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Trachytic"> Trakitik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Grafik"> Grafik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Mirmekitik"> Mirmekitik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Pertitik"> Pertitik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Poikilitik"> Poikilitik</label>
+                            <label class="chip"><input type="checkbox" name="beku_tekstur_khusus" value="Sferulit"> Sferulit</label>
+                        </div>
+                    </div>
+
+                    <h3>⚗️ Komposisi Mineral (estimasi %)</h3>
+                    <p class="ref-note">Ref: Klasifikasi QAPF (Streckeisen, 1976). Q = Kuarsa, A = Alkali feldspar, P = Plagioklas, F = Foid, M = Mafik</p>
+
+                    <div class="grid grid-4" style="margin-top:0.75rem;">
+                        <div class="form-group">
+                            <label>Kuarsa (Q) %</label>
+                            <input type="number" id="beku_q" min="0" max="100" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Alkali Feldspar (A) %</label>
+                            <input type="number" id="beku_a" min="0" max="100" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Plagioklas (P) %</label>
+                            <input type="number" id="beku_p" min="0" max="100" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Foid (F) %</label>
+                            <input type="number" id="beku_f" min="0" max="100" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Colour Index (M) — % Mineral Mafik <span class="tip" data-tip="Persentase total mineral gelap/mafik. Leukokratik <35%, Mesokratik 35-65%, Melanokratik >65%">?</span></label>
+                            <input type="number" id="beku_m" min="0" max="100" placeholder="0-100">
+                        </div>
+                        <div class="form-group">
+                            <label>Klasifikasi Warna</label>
+                            <input type="text" id="beku_color_class" readonly placeholder="(otomatis)" style="background:var(--stone-50);">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mineral Teridentifikasi</label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Kuarsa"> Kuarsa</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Ortoklas"> Ortoklas</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Sanidin"> Sanidin</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Mikroklin"> Mikroklin</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Plagioklas"> Plagioklas</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Olivin"> Olivin</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Piroksen (Augit)"> Piroksen (Augit)</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Piroksen (Enstatit)"> Piroksen (Enstatit)</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Hornblende"> Hornblende</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Biotit"> Biotit</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Muskovit"> Muskovit</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Nefelin"> Nefelin</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Leusit"> Leusit</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Magnetit"> Magnetit</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Ilmenit"> Ilmenit</label>
+                            <label class="chip"><input type="checkbox" name="beku_mineral" value="Apatit"> Apatit</label>
+                        </div>
+                    </div>
+
+                    <div id="beku_suggestion" class="suggestion-box hidden">
+                        <h4>💡 Nama Batuan Berdasarkan IUGS</h4>
+                        <div class="suggestion-name" id="beku_rock_name">-</div>
+                        <div class="suggestion-basis" id="beku_rock_basis">-</div>
+                    </div>
+
+                    <div class="form-group" style="margin-top:1rem;">
+                        <label>Catatan Tambahan</label>
+                        <textarea id="beku_catatan" placeholder="Deskripsi tambahan, alterasi, urat, kontak..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-accent" onclick="generateBeku()">⚡ Generate Deskripsi</button>
+                    <button type="button" class="btn btn-success" onclick="saveData('beku')">💾 Simpan</button>
+                    <button type="button" class="btn btn-outline" onclick="resetForm('beku')">🔄 Reset</button>
+                </div>
+
+                <div id="resultBeku" class="result-box hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════ BATUAN SEDIMEN ═══════════ -->
+    <div id="sedimen" class="section">
+        <div class="card">
+            <h2><div class="icon" style="background:var(--amber-100);">📚</div> Deskripsi Batuan Sedimen</h2>
+            <p class="ref-note">Referensi: Skala Wentworth (1922), Klasifikasi Dunham (1962), Folk (1959/1962), Pettijohn et al. (1987)</p>
+
+            <form id="formSedimen" onsubmit="return false;">
+                <div class="field-section">
+                    <h3>📍 Informasi Lokasi & Singkapan</h3>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="required">Nama Lokasi / Station</label>
+                            <input type="text" id="sedimen_lokasi_nama" placeholder="Cth: ST-02">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal</label>
+                            <input type="date" id="sedimen_lokasi_tanggal">
+                        </div>
+                    </div>
+                    <div class="gps-box">
+                        <label style="font-weight:600; color:var(--sky-600);">📍 Koordinat GPS</label>
+                        <div class="grid grid-2" style="margin-top:0.5rem;">
+                            <div class="form-group"><label>Lintang (Lattitude)</label><input type="number" step="0.000001" id="sedimen_lokasi_lat" placeholder="0.507068"></div>
+                            <div class="form-group"><label>Bujur (Longitude)</label><input type="number" step="0.000001" id="sedimen_lokasi_lng" placeholder="101.447779"></div>
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('sedimen')" style="font-size:0.8rem;">📡 Ambil GPS</button>
+                        <div id="sedimen_coordDisplay" class="coord-display hidden"></div>
+                    </div>
+                    <div class="grid grid-3">
+                        <div class="form-group"><label>Cuaca</label><select id="sedimen_lokasi_cuaca"><option value="">Pilih...</option><option>Cerah</option><option>Cerah Berawan</option><option>Berawan</option><option>Mendung</option><option>Hujan Ringan</option><option>Hujan Sedang</option><option>Hujan Lebat</option></select></div>
+                        <div class="form-group"><label>Elevasi (mdpl)</label><input type="number" id="sedimen_lokasi_elevasi" placeholder="125"></div>
+                        <div class="form-group"><label>Strike Lapisan</label><input type="number" id="sedimen_lokasi_strike" placeholder="N 0-360 E"></div>
+                        <div class="form-group"><label>Dip Lapisan</label><input type="number" id="sedimen_lokasi_dip" placeholder="0-90"></div>
+                        <div class="form-group"><label>Traverse</label><select id="sedimen_lokasi_traverse"><option value="">Pilih...</option><option>Sungai</option><option>Jalan</option><option>Bukit/Lereng</option><option>Pantai</option><option>Tambang/Galian</option></select></div>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="form-group"><label>Dimensi Singkapan</label><input type="text" id="sedimen_lokasi_dimensi" placeholder="P × L × T meter"></div>
+                        <div class="form-group">
+                            <label>Ketebalan Perlapisan</label>
+                            <select id="sedimen_lokasi_bedding">
+                                <option value="">Pilih...</option>
+                                <option>Very Thickly Bedded (>100cm)</option>
+                                <option>Thickly Bedded (30-100cm)</option>
+                                <option>Medium Bedded (10-30cm)</option>
+                                <option>Thinly Bedded (3-10cm)</option>
+                                <option>Very Thinly Bedded (1-3cm)</option>
+                                <option>Laminated (<1cm)</option>
+                                <option>Masif / Tidak berlapis</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Derajat Pelapukan</label>
+                            <select id="sedimen_lokasi_pelapukan">
+                                <option value="">Pilih...</option>
+                                <option>Fresh (I)</option><option>Slightly Weathered (II)</option><option>Moderately Weathered (III)</option>
+                                <option>Highly Weathered (IV)</option><option>Completely Weathered (V)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kekerasan</label>
+                            <select id="sedimen_lokasi_kekerasan">
+                                <option value="">Pilih...</option>
+                                <option>Sangat Lunak</option><option>Lunak</option><option>Sedang</option><option>Keras</option><option>Sangat Keras</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Foto Singkapan</label>
+                        <div class="upload-zone" onclick="document.getElementById('sedimen_foto').click()" ondrop="handleDrop(event,'sedimen')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="icon">📸</div><p>Klik atau drag foto</p>
+                            <input type="file" id="sedimen_foto" accept="image/*" class="hidden" onchange="handleImageUpload(event,'sedimen')">
+                        </div>
+                        <div id="sedimen_imagePreviewContainer" class="hidden">
+                            <img id="sedimen_imagePreview" class="image-preview" alt="Preview">
+                            <div class="image-info" id="sedimen_imageInfo"></div>
+                            <button type="button" class="btn btn-danger" onclick="removeImage('sedimen')" style="margin-top:0.5rem;font-size:0.78rem;">✕ Hapus</button>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Catatan Lapangan</label><textarea id="sedimen_lokasi_catatan" placeholder="Catatan lokasi..."></textarea></div>
+                </div>
+
+                <div class="field-section">
+                    <h3>🔬 Deskripsi Megaskopis Batuan</h3>
+
+                    <div class="form-group">
+                        <label>Jenis Batuan Sedimen</label>
+                        <select id="sedimen_jenis" onchange="toggleSedimenFields()">
+                            <option value="">Pilih...</option>
+                            <option value="Klastik">Klastik (Detritus/Silisiklastik)</option>
+                            <option value="Karbonat">Karbonat</option>
+                            <option value="Evaporit">Evaporit</option>
+                            <option value="Silika">Silika (Chert, dll)</option>
+                            <option value="Organik">Organik (Batubara, dll)</option>
+                            <option value="Vulkaniklastik">Vulkaniklastik (Piroklastik)</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group"><small style="color:var(--stone-400)">Warna Segar</small><input type="text" id="sedimen_warna_segar" placeholder="Cth: Abu-abu kecoklatan"></div>
+                        <div class="form-group"><small style="color:var(--stone-400)">Warna Lapuk</small><input type="text" id="sedimen_warna_lapuk" placeholder="Cth: Coklat kemerahan"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Struktur Sedimen</label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Masif"> Masif</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Perlapisan Sejajar"> Perlapisan Sejajar</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Graded Bedding"> Graded Bedding</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Cross Bedding"> Cross Bedding</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Ripple Marks"> Ripple Marks</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Mud Cracks"> Mud Cracks</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Flute Cast"> Flute Cast</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Load Cast"> Load Cast</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Bioturbasi"> Bioturbasi</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Berfosil"> Berfosil</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Nodular"> Nodular</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Konkresi"> Konkresi</label>
+                            <label class="chip"><input type="checkbox" name="sedimen_struktur" value="Laminasi"> Laminasi</label>
+                        </div>
+                    </div>
+
+                    <!-- KLASTIK FIELDS -->
+                    <div id="sedimen_klastik_fields" class="hidden">
+                        <h3>📏 Tekstur Klastik — Skala Wentworth (1922)</h3>
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label>Ukuran Butir <span class="tip" data-tip="Skala Wentworth: Boulder >256mm, Cobble 64-256mm, Pebble 4-64mm, Granule 2-4mm, dst.">?</span></label>
+                                <select id="sedimen_ukuran">
+                                    <option value="">Pilih...</option>
+                                    <option value="Boulder (>256mm)">Boulder / Bongkah (>256mm)</option>
+                                    <option value="Cobble (64-256mm)">Cobble / Berangkal (64-256mm)</option>
+                                    <option value="Pebble (4-64mm)">Pebble / Kerikil (4-64mm)</option>
+                                    <option value="Granule (2-4mm)">Granule / Butir Kasar (2-4mm)</option>
+                                    <option value="Very Coarse Sand (1-2mm)">Pasir Sangat Kasar (1-2mm)</option>
+                                    <option value="Coarse Sand (0.5-1mm)">Pasir Kasar (0.5-1mm)</option>
+                                    <option value="Medium Sand (0.25-0.5mm)">Pasir Sedang (0.25-0.5mm)</option>
+                                    <option value="Fine Sand (0.125-0.25mm)">Pasir Halus (0.125-0.25mm)</option>
+                                    <option value="Very Fine Sand (0.0625-0.125mm)">Pasir Sangat Halus (0.0625-0.125mm)</option>
+                                    <option value="Silt (0.004-0.0625mm)">Lanau / Silt (0.004-0.0625mm)</option>
+                                    <option value="Clay (<0.004mm)">Lempung / Clay (<0.004mm)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Pemilahan (Sorting) <span class="tip" data-tip="Keseragaman ukuran butir">?</span></label>
+                                <select id="sedimen_sorting">
+                                    <option value="">Pilih...</option>
+                                    <option>Terpilah sangat baik (Very Well Sorted)</option>
+                                    <option>Terpilah baik (Well Sorted)</option>
+                                    <option>Terpilah sedang (Moderately Sorted)</option>
+                                    <option>Terpilah kurang (Poorly Sorted)</option>
+                                    <option>Terpilah sangat kurang (Very Poorly Sorted)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label>Kebundaran (Roundness) <span class="tip" data-tip="Tingkat kelengkungan sudut butir: Angular → Well Rounded">?</span></label>
+                                <select id="sedimen_roundness">
+                                    <option value="">Pilih...</option>
+                                    <option>Sangat Menyudut (Very Angular)</option><option>Menyudut (Angular)</option><option>Menyudut Tanggung (Sub-angular)</option>
+                                    <option>Membundar tanggung (Sub-rounded)</option><option>Membundar (Rounded)</option><option> Sangat Membundar (Well Rounded)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Derajat Kebolaan (Sphericity)</label>
+                                <select id="sedimen_sphericity">
+                                    <option value="">Pilih...</option>
+                                    <option>Tinggi (High Sphericity)</option><option>Sedang (Medium Sphericity)</option><option>Rendah (Low Sphericity)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label>Kemas (Fabric)</label>
+                                <select id="sedimen_fabric">
+                                    <option value="">Pilih...</option>
+                                    <option>Didukung Butiran - Grain supported (Clast-supported)</option>
+                                    <option>Didukung Matriks - Matrix Supported</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Kematangan Tekstural</label>
+                                <select id="sedimen_maturity">
+                                    <option value="">Pilih...</option>
+                                    <option>Belum matang (Immature)</option><option>Submatang (Submature)</option><option>Matang (Mature)</option><option>Supermatang (Supermature)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Semen / Matriks</label>
+                            <div class="chip-group">
+                                <label class="chip"><input type="checkbox" name="sedimen_site" value="Silika"> Silika</label>
+                                <label class="chip"><input type="checkbox" name="sedimen_semen" value="Kalsit"> Kalsit</label>
+                                <label class="chip"><input type="checkbox" name="sedimen_semen" value="Oksida Besi"> Oksida Besi</label>
+                                <label class="chip"><input type="checkbox" name="sedimen_semen" value="Lempung"> Lempung</label>
+                                <label class="chip"><input type="checkbox" name="sedimen_semen" value="Dolomit"> Dolomit</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KARBONAT FIELDS -->
+                    <div id="sedimen_karbonat_fields" class="hidden">
+                        <h3>🏛️ Klasifikasi Batuan Karbonat</h3>
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label>Dunham (1962) <span class="tip" data-tip="Berdasarkan tekstur deposisional & keberadaan mud">?</span></label>
+                                <select id="sedimen_dunham">
+                                    <option value="">Pilih...</option>
+                                    <option>Mudstone (mud-supported, <10% grain)</option>
+                                    <option>Wackestone (mud-supported, >10% grain)</option>
+                                    <option>Packstone (grain-supported, mud present)</option>
+                                    <option>Grainstone (grain-supported, no mud)</option>
+                                    <option>Boundstone (organic binding)</option>
+                                    <option>Crystalline</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Folk (1959/62)</label>
+                                <select id="sedimen_folk">
+                                    <option value="">Pilih...</option>
+                                    <option>Biomicrite</option><option>Biosparite</option>
+                                    <option>Oomicrite</option><option>Oosparite</option>
+                                    <option>Pelmicrite</option><option>Pelsparite</option>
+                                    <option>Intramicrite</option><option>Intrasparite</option>
+                                    <option>Micrite</option><option>Dismicrite</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VULKANIKLASTIK FIELDS -->
+                    <div id="sedimen_vulkanik_fields" class="hidden">
+                        <h3>🌋 Klasifikasi Piroklastik</h3>
+                        <div class="form-group">
+                            <label>Ukuran Fragmen <span class="tip" data-tip="Klasifikasi Schmid (1981): Bomb/Block >64mm, Lapilli 2-64mm, Ash <2mm">?</span></label>
+                            <select id="sedimen_pyro_size">
+                                <option value="">Pilih...</option>
+                                <option>Agglomerat / Breksi Vulkanik (>64mm, Bomb/Block)</option>
+                                <option>Lapilli Tuff (2-64mm)</option>
+                                <option>Tuff (Ash, <2mm)</option>
+                                <option>Tuff Halus (Fine Ash, <0.0625mm)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top:1rem;">
+                        <label>Reaksi HCl <span class="tip" data-tip="Tes effervescence: tetesi HCl 10% pada batuan">?</span></label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="radio" name="sedimen_hcl" value="Effervescence Kuat"> Kuat (CaCO₃)</label>
+                            <label class="chip"><input type="radio" name="sedimen_hcl" value="Effervescence Lemah"> Lemah</label>
+                            <label class="chip"><input type="radio" name="sedimen_hcl" value="Bereaksi jika digerus"> Bereaksi jika digerus (Dolomit)</label>
+                            <label class="chip"><input type="radio" name="sedimen_hcl" value="Tidak Bereaksi"> Tidak Bereaksi</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Komposisi / Mineral</label>
+                        <textarea id="sedimen_komposisi" placeholder="Cth: Kuarsa 60%, Feldspar 25%, Fragmen Litik 10%, Matriks Lempung 5%"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Catatan Tambahan</label>
+                        <textarea id="sedimen_catatan" placeholder="Fosil, kontak stratigrafi, lingkungan pengendapan..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-accent" onclick="generateSedimen()">⚡ Generate</button>
+                    <button type="button" class="btn btn-success" onclick="saveData('sedimen')">💾 Simpan</button>
+                    <button type="button" class="btn btn-outline" onclick="resetForm('sedimen')">🔄 Reset</button>
+                </div>
+                <div id="resultSedimen" class="result-box hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════ BATUAN METAMORF ═══════════ -->
+    <div id="metamorf" class="section">
+        <div class="card">
+            <h2><div class="icon" style="background:#e0e7ff;">💎</div> Deskripsi Batuan Metamorf</h2>
+            <p class="ref-note">Referensi: IUGS SCMR (Fettes & Desmons, 2007), Miyashiro (1994), Yardley (1989)</p>
+
+            <form id="formMetamorf" onsubmit="return false;">
+                <div class="field-section">
+                    <h3>📍 Informasi Lokasi & Singkapan</h3>
+                    <div class="grid grid-2">
+                        <div class="form-group"><label class="required">Nama Lokasi</label><input type="text" id="metamorf_lokasi_nama" placeholder="Cth: ST-03"></div>
+                        <div class="form-group"><label>Tanggal</label><input type="date" id="metamorf_lokasi_tanggal"></div>
+                    </div>
+                    <div class="gps-box">
+                        <label style="font-weight:600; color:var(--sky-600);">📍 Koordinat GPS</label>
+                        <div class="grid grid-2" style="margin-top:0.5rem;">
+                            <div class="form-group"><label>Lintang (Lattitude)</label><input type="number" step="0.000001" id="metamorf_lokasi_lat" placeholder="0.507068"></div>
+                            <div class="form-group"><label>Bujur (Longitude)</label><input type="number" step="0.000001" id="metamorf_lokasi_lng" placeholder="106.815743"></div>
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('metamorf')" style="font-size:0.8rem;">📡 Ambil GPS</button>
+                        <div id="metamorf_coordDisplay" class="coord-display hidden"></div>
+                    </div>
+                    <div class="grid grid-3">
+                        <div class="form-group"><label>Cuaca</label><select id="metamorf_lokasi_cuaca"><option value="">Pilih...</option><option>Cerah</option><option>Cerah Berawan</option><option>Berawan</option><option>Mendung</option><option>Hujan Ringan</option></select></div>
+                        <div class="form-group"><label>Elevasi</label><input type="number" id="metamorf_lokasi_elevasi"></div>
+                        <div class="form-group"><label>Traverse</label><select id="metamorf_lokasi_traverse"><option value="">Pilih...</option><option>Sungai</option><option>Jalan</option><option>Bukit/Lereng</option><option>Tambang/Galian</option></select></div>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="form-group"><label>Dimensi Singkapan</label><input type="text" id="metamorf_lokasi_dimensi" placeholder="P × L × T meter"></div>
+                        <div class="form-group">
+                            <label>Derajat Pelapukan</label>
+                            <select id="metamorf_lokasi_pelapukan"><option value="">Pilih...</option><option>Fresh (I)</option><option>Slightly Weathered(II)</option><option>Moderate Weathered (III)</option><option>Highly Weathered (IV)</option><option>Completely Weathered (V)</option></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Foto</label>
+                        <div class="upload-zone" onclick="document.getElementById('metamorf_foto').click()" ondrop="handleDrop(event,'metamorf')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="icon">📸</div><p>Klik atau drag foto</p>
+                            <input type="file" id="metamorf_foto" accept="image/*" class="hidden" onchange="handleImageUpload(event,'metamorf')">
+                        </div>
+                        <div id="metamorf_imagePreviewContainer" class="hidden">
+                            <img id="metamorf_imagePreview" class="image-preview" alt="Preview">
+                            <div class="image-info" id="metamorf_imageInfo"></div>
+                            <button type="button" class="btn btn-danger" onclick="removeImage('metamorf')" style="margin-top:0.5rem;font-size:0.78rem;">✕ Hapus</button>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Catatan Lapangan</label><textarea id="metamorf_lokasi_catatan"></textarea></div>
+                </div>
+
+                <div class="field-section">
+                    <h3>🔬 Deskripsi Megaskopis</h3>
+
+                    <div class="grid grid-2">
+                        <div class="form-group"><small style="color:var(--stone-400)">Warna Segar</small><input type="text" id="metamorf_warna_segar" placeholder="Segar"></div>
+                        <div class="form-group"><small style="color:var(--stone-400)">Warna Lapuk</small><input type="text" id="metamorf_warna_lapuk" placeholder="Lapuk"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Struktur Utama</label>
+                        <select id="metamorf_struktur" onchange="toggleMetamorfFields()">
+                            <option value="">Pilih...</option>
+                            <option value="Foliasi">Foliasi</option>
+                            <option value="Non-Foliasi">Non-Foliasi</option>
+                        </select>
+                    </div>
+
+                    <div id="metamorf_foliasi_fields" class="hidden">
+                        <div class="form-group">
+                            <label>Jenis Foliasi</label>
+                            <div class="chip-group">
+                                <label class="chip"><input type="radio" name="metamorf_foliasi" value="Slaty Cleavage"> Slaty Cleavage</label>
+                                <label class="chip"><input type="radio" name="metamorf_foliasi" value="Phyllitic"> Phyllitic</label>
+                                <label class="chip"><input type="radio" name="metamorf_foliasi" value="Schistosity"> Schistosity</label>
+                                <label class="chip"><input type="radio" name="metamorf_foliasi" value="Gneissic Banding"> Gneissic Banding</label>
+                                <label class="chip"><input type="radio" name="metamorf_foliasi" value="Mylonitic"> Mylonitic</label>
+                                <label class="chip"><input type="radio" name="metamorf_foliasi" value="Migmatitic"> Migmatitic</label>
+                            </div>
+                        </div>
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label>Strike / Jurus Foliasi</label>
+                                <input type="text" id="metamorf_strike" placeholder="Cth: N 45° E">
+                            </div>
+                            <div class="form-group">
+                                <label>Dip / Kemiringan</label>
+                                <input type="text" id="metamorf_dip" placeholder="Cth: 30° SE">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="metamorf_nonfoliasi_fields" class="hidden">
+                        <div class="form-group">
+                            <label>Tipe Non-Foliasi</label>
+                            <div class="chip-group">
+                                <label class="chip"><input type="radio" name="metamorf_nonfoliasi" value="Granoblastik"> Granoblastik</label>
+                                <label class="chip"><input type="radio" name="metamorf_nonfoliasi" value="Hornfelsik"> Hornfelsik</label>
+                                <label class="chip"><input type="radio" name="metamorf_nonfoliasi" value="Kataklastik"> Kataklastik</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tekstur</label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Lepidoblastik"> Lepidoblastik</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Nematoblastik"> Nematoblastik</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Granoblastik"> Granoblastik</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Porfiroblastik"> Porfiroblastik</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Poikiloblastik"> Poikiloblastik</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Decussate"> Decussate</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_tekstur" value="Mortar"> Mortar</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mineral Teridentifikasi</label>
+                        <div class="chip-group">
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Kuarsa"> Kuarsa</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Feldspar"> Feldspar</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Muskovit"> Muskovit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Biotit"> Biotit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Klorit"> Klorit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Garnet"> Garnet</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Staurolit"> Staurolit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Kyanit"> Kyanit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Sillimanit"> Sillimanit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Andalusit"> Andalusit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Epidot"> Epidot</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Aktinolit"> Aktinolit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Hornblende"> Hornblende</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Talk"> Talk</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Serpentin"> Serpentin</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Kalsit"> Kalsit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Grafit"> Grafit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Cordierit"> Cordierit</label>
+                            <label class="chip"><input type="checkbox" name="metamorf_mineral" value="Wollastonit"> Wollastonit</label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Derajat Metamorfisme <span class="tip" data-tip="Berdasarkan mineral indeks dan asosiasi mineral">?</span></label>
+                            <select id="metamorf_derajat">
+                                <option value="">Pilih...</option>
+                                <option>Sangat Rendah (Very Low Grade)</option>
+                                <option>Rendah (Low Grade) — Klorit, Muskovit</option>
+                                <option>Menengah (Medium Grade) — Garnet, Staurolit</option>
+                                <option>Tinggi (High Grade) — Sillimanit, Kyanit</option>
+                                <option>Sangat Tinggi (Very High Grade) — Migmatit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipe Metamorfisme</label>
+                            <select id="metamorf_tipe">
+                                <option value="">Pilih...</option>
+                                <option>Regional (Barrovian)</option>
+                                <option>Kontak (Thermal)</option>
+                                <option>Dinamik (Shear Zone)</option>
+                                <option>Burial</option>
+                                <option>Hidrotermal</option>
+                                <option>Impact/Shock</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Protolith (batuan asal, jika dapat diinterpretasi)</label>
+                        <input type="text" id="metamorf_protolith" placeholder="Cth: Batulempung, Batulanau, Granit, Basalt">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="metamorf_catatan" placeholder="Kontak, urat, retrograde, dll..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-accent" onclick="generateMetamorf()">⚡ Generate</button>
+                    <button type="button" class="btn btn-success" onclick="saveData('metamorf')">💾 Simpan</button>
+                    <button type="button" class="btn btn-outline" onclick="resetForm('metamorf')">🔄 Reset</button>
+                </div>
+                <div id="resultMetamorf" class="result-box hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════ DATA ═══════════ -->
+    <div id="data" class="section">
+        <div class="card">
+            <h2><div class="icon" style="background:var(--emerald-100);">📊</div> Manajemen Data</h2>
+            <div class="stats-row">
+                <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total</div></div>
+                <div class="stat"><div class="stat-num" id="statBeku">0</div><div class="stat-label">Beku</div></div>
+                <div class="stat"><div class="stat-num" id="statSedimen">0</div><div class="stat-label">Sedimen</div></div>
+                <div class="stat"><div class="stat-num" id="statMetamorf">0</div><div class="stat-label">Metamorf</div></div>
+            </div>
+            <div class="form-group" style="margin-top:1rem;">
+                <input type="text" id="searchData" placeholder="🔍 Cari berdasarkan lokasi, tanggal, tipe..." onkeyup="loadDataList()">
+            </div>
+            <div class="table-wrap" id="dataList"><p style="text-align:center;color:var(--stone-400);padding:2rem;">Memuat data...</p></div>
+        </div>
+    </div>
+
+    <!-- ═══════════ EXPORT ═══════════ -->
+    <div id="export" class="section">
+        <div class="card">
+            <h2><div class="icon" style="background:var(--sky-100);">📤</div> Export & Import</h2>
+            <h3>Export Data</h3>
+            <div class="export-grid">
+                <div class="export-card" onclick="exportPDF()"><div class="icon">📄</div><h4>PDF</h4><p>1 halaman per deskripsi</p></div>
+                <div class="export-card" onclick="exportCSV()"><div class="icon">📊</div><h4>CSV</h4><p>Spreadsheet / Excel</p></div>
+                <div class="export-card" onclick="exportJSON()"><div class="icon">📝</div><h4>JSON</h4><p>Backup lengkap</p></div>
+            </div>
+            <h3 style="margin-top:1.5rem;">Import / Restore</h3>
+            <div class="form-group">
+                <label>Pilih file backup (.json)</label>
+                <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+                <p style="font-size:0.75rem;color:var(--stone-400);margin-top:0.3rem;">Data ditambahkan ke database yang ada</p>
+            </div>
+            <div class="btn-group"><button class="btn btn-danger" onclick="clearAllData()">🗑️ Hapus Semua Data</button></div>
+        </div>
+    </div>
+
+    <!-- ═══════════ REFERENSI ═══════════ -->
+    <div id="referensi" class="section">
+        <div class="card">
+            <h2><div class="icon" style="background:var(--violet-50);">📖</div> Referensi Standar</h2>
+            <p style="color:var(--stone-500);margin-bottom:1rem;">Parameter dan klasifikasi dalam aplikasi ini didasarkan pada standar geologi internasional berikut:</p>
+
+            <h3>Batuan Beku</h3>
+            <ul style="padding-left:1.25rem; font-size:0.85rem; color:var(--stone-600); line-height:2;">
+                <li><strong>Streckeisen, A. (1976)</strong> — To each plutonic rock its proper name. Earth-Sci. Rev. 12: 1-33. <em>(Klasifikasi QAPF)</em></li>
+                <li><strong>Le Maitre, R.W. et al. (2002)</strong> — Igneous Rocks: A Classification and Glossary of Terms. Cambridge Univ. Press. <em>(IUGS Edisi ke-2)</em></li>
+                <li><strong>Le Bas, M.J. & Streckeisen, A. (1991)</strong> — The IUGS systematics of igneous rocks. J. Geol. Soc. London 148: 825-833.</li>
+            </ul>
+
+            <h3>Batuan Sedimen</h3>
+            <ul style="padding-left:1.25rem; font-size:0.85rem; color:var(--stone-600); line-height:2;">
+                <li><strong>Wentworth, C.K. (1922)</strong> — A scale of grade and class terms for clastic sediments. J. Geology 30: 377-392. <em>(Skala ukuran butir)</em></li>
+                <li><strong>Folk, R.L. (1959, 1962)</strong> — Practical petrographic classification of limestones. AAPG Bull. <em>(Klasifikasi batuan karbonat)</em></li>
+                <li><strong>Dunham, R.J. (1962)</strong> — Classification of carbonate rocks. AAPG Memoir 1: 108-121.</li>
+                <li><strong>Pettijohn, F.J. et al. (1987)</strong> — Sand and Sandstone. Springer-Verlag. <em>(Klasifikasi sandstone)</em></li>
+                <li><strong>Schmid, R. (1981)</strong> — Descriptive nomenclature and classification of pyroclastic deposits and fragments. Geol. Rundschau.</li>
+            </ul>
+
+            <h3>Batuan Metamorf</h3>
+            <ul style="padding-left:1.25rem; font-size:0.85rem; color:var(--stone-600); line-height:2;">
+                <li><strong>Fettes, D. & Desmons, J. (2007)</strong> — Metamorphic Rocks: A Classification and Glossary of Terms. Cambridge Univ. Press. <em>(IUGS SCMR)</em></li>
+                <li><strong>Miyashiro, A. (1994)</strong> — Metamorphic Petrology. UCL Press.</li>
+                <li><strong>Yardley, B.W.D. (1989)</strong> — An Introduction to Metamorphic Petrology. Longman.</li>
+            </ul>
+
+            <h3>Deskripsi Lapangan Umum</h3>
+            <ul style="padding-left:1.25rem; font-size:0.85rem; color:var(--stone-600); line-height:2;">
+                <li><strong>British Standard BS 5930 (2015)</strong> — Code of practice for ground investigations. <em>(Derajat pelapukan I - VI)</em></li>
+                <li><strong>ISRM (1981)</strong> — Rock Characterization, Testing and Monitoring: ISRM Suggested Methods.</li>
+                <li><strong>Tucker, M.E. (2011)</strong> — Sedimentary Rocks in the Field. Wiley. <em>(Panduan deskripsi lapangan)</em></li>
+                <li><strong>Compton, R.R. (1985)</strong> — Geology in the Field. Wiley.</li>
+            </ul>
+            <h3>Referensi Gambar</h3>
+            <ul style="padding-left:1.25rem; font-size:0.85rem; color:var(--stone-600); line-height:2;">
+                <li><strong>Minerals</strong> — https://en.wikipedia.org/wiki/Mineral ; https://www.alamy.com/; and https://www.alexstrekeisen.it/english/index.php ; https://www.eiscolabs.com/ ; https://www.britannica.com/science</li>
+                <li><strong>Granulitas</strong> https://sites.pitt.edu/~cejones/GeoImages/</li>
+                <li><strong>Struktur Sedimen</strong> — https://www.geologypage.com/; https://geo.libretexts.org/ ; https://geologyistheway.com/ ; https://www.researchgate.net/ </li>
+                <li><strong>Tekstur Batuan beku</strong> — https://geologybase.com/ ; https://www.geologyin.com/</li>
+                <li><strong>Derajat Kristalisasi</strong> — https://geologybase.com/ ; https://www.alamy.com/ ; https://www.alexstrekeisen.it/english/index.php ; https://www.researchgate.net/</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <p><strong>LitologiKu Pro</strong> — Aplikasi Deskripsi Geologi Lapangan</p>
+    <p>Teknik Geologi — Universitas Islam Riau | IndexedDB Offline | v3.0</p>
+    <p style="opacity:0.5;">© 2026 — Created by TC and UIR team</p>
+</footer>
+
+<!-- MODAL -->
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 style="font-size:1.1rem;">📋 Detail Data</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   INDEXEDDB
+   ═══════════════════════════════════════════ */
+const DB_NAME = 'LitologiKuDB';
+const DB_VERSION = 2;
+let db;
+const currentImages = { beku: null, sedimen: null, metamorf: null };
+// Variabel Global untuk State Sorting
+let currentSort = { column: 'tanggal', order: 'desc' }; // Default sort by tanggal terbaru
+let allData = []; // Pastikan ini diisi saat load dari IndexedDB
+
+function initDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => { db = req.result; resolve(db); };
+        req.onupgradeneeded = (e) => {
+            const d = e.target.result;
+            if (!d.objectStoreNames.contains('rocks')) {
+                const s = d.createObjectStore('rocks', { keyPath: 'id', autoIncrement: true });
+                s.createIndex('type', 'type', { unique: false });
+                s.createIndex('timestamp', 'timestamp', { unique: false });
+            }
+        };
+    });
+}
+
+function saveToDB(data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(['rocks'], 'readwrite');
+        const req = tx.objectStore('rocks').add(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function getAllData() {
+    return new Promise((resolve, reject) => {
+        const req = db.transaction(['rocks'], 'readonly').objectStore('rocks').getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function deleteData(id) {
+    return new Promise((resolve, reject) => {
+        const req = db.transaction(['rocks'], 'readwrite').objectStore('rocks').delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function clearDB() {
+    return new Promise((resolve, reject) => {
+        const req = db.transaction(['rocks'], 'readwrite').objectStore('rocks').clear();
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
+}
+
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════ */
+function toast(msg, type = 'info') {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+/* ═══════════════════════════════════════════
+   IMAGE HANDLING
+   ═══════════════════════════════════════════ */
+function handleImageUpload(e, type) {
+    const f = e.target.files[0];
+    if (f) processImage(f, type);
+}
+
+function handleDrop(e, type) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) processImage(f, type);
+}
+
+function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
+function handleDragLeave(e) { e.currentTarget.classList.remove('dragover'); }
+
+function processImage(file, type) {
+    if (file.size > 5 * 1024 * 1024) { toast('File terlalu besar (max 5MB)', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const max = 1024;
+            if (w > h) { if (w > max) { h = (h * max) / w; w = max; } }
+            else { if (h > max) { w = (w * max) / h; h = max; } }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const data = canvas.toDataURL('image/jpeg', 0.75);
+            currentImages[type] = data;
+            document.getElementById(`${type}_imagePreview`).src = data;
+            document.getElementById(`${type}_imagePreviewContainer`).classList.remove('hidden');
+            document.getElementById(`${type}_imageInfo`).textContent = `${Math.round(data.length / 1024)}KB | ${w}×${h}px`;
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeImage(type) {
+    currentImages[type] = null;
+    document.getElementById(`${type}_foto`).value = '';
+    document.getElementById(`${type}_imagePreviewContainer`).classList.add('hidden');
+}
+
+/* ═══════════════════════════════════════════
+   GPS
+   ═══════════════════════════════════════════ */
+function getCurrentLocation(type) {
+    if (!navigator.geolocation) { toast('GPS tidak didukung browser', 'error'); return; }
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Mengambil...';
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            document.getElementById(`${type}_lokasi_lat`).value = pos.coords.latitude.toFixed(6);
+            document.getElementById(`${type}_lokasi_lng`).value = pos.coords.longitude.toFixed(6);
+            const cd = document.getElementById(`${type}_coordDisplay`);
+            cd.textContent = `📍 ${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)} (±${Math.round(pos.coords.accuracy)}m)`;
+            cd.classList.remove('hidden');
+            btn.disabled = false; btn.innerHTML = '📡 Ambil GPS';
+            toast('Koordinat berhasil diambil', 'success');
+        },
+        (err) => { toast('Gagal GPS: ' + err.message, 'error'); btn.disabled = false; btn.innerHTML = '📡 Ambil GPS'; },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    const nb = document.querySelector(`nav button[data-section="${id}"]`);
+    if (nb) nb.classList.add('active');
+    document.getElementById('navMenu').classList.remove('show');
+    if (id === 'data') loadDataList();
+    if (id === 'home') updateStats();
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(i => { if (!i.value) i.value = today; });
+    window.scrollTo(0, 0);
+}
+
+function toggleMenu() { document.getElementById('navMenu').classList.toggle('show'); }
+
+function toggleSedimenFields() {
+    const v = document.getElementById('sedimen_jenis').value;
+    document.getElementById('sedimen_klastik_fields').classList.toggle('hidden', v !== 'Klastik');
+    document.getElementById('sedimen_karbonat_fields').classList.toggle('hidden', v !== 'Karbonat');
+    document.getElementById('sedimen_vulkanik_fields').classList.toggle('hidden', v !== 'Vulkaniklastik');
+}
+
+function toggleMetamorfFields() {
+    const v = document.getElementById('metamorf_struktur').value;
+    document.getElementById('metamorf_foliasi_fields').classList.toggle('hidden', v !== 'Foliasi');
+    document.getElementById('metamorf_nonfoliasi_fields').classList.toggle('hidden', v !== 'Non-Foliasi');
+}
+
+/* ═══════════════════════════════════════════
+   AUTO COLOUR INDEX
+   ═══════════════════════════════════════════ */
+document.getElementById('beku_m')?.addEventListener('input', function() {
+    const m = parseInt(this.value) || 0;
+    let c = '';
+    if (m < 10) c = 'Hololeukokratik (M < 10%)';
+    else if (m < 35) c = 'Leukokratik (M 10-35%)';
+    else if (m < 65) c = 'Mesokratik (M 35-65%)';
+    else if (m < 90) c = 'Melanokratik (M 65-90%)';
+    else c = 'Holomelanokratik / Ultramafik (M > 90%)';
+    document.getElementById('beku_color_class').value = c;
+});
+
+/* ═══════════════════════════════════════════
+   IUGS ROCK NAME SUGGESTION (simplified QAPF)
+   ═══════════════════════════════════════════ */
+function suggestRockName() {
+    let Q = parseFloat(document.getElementById('beku_q').value) || 0;
+    let A = parseFloat(document.getElementById('beku_a').value) || 0;
+    let P = parseFloat(document.getElementById('beku_p').value) || 0;
+    let F = parseFloat(document.getElementById('beku_f').value) || 0;
+    const M = parseFloat(document.getElementById('beku_m').value) || 0;
+    const gran = document.getElementById('beku_granularitas').value;
+
+    if (M >= 90) {
+        document.getElementById('beku_suggestion').classList.remove('hidden');
+        document.getElementById('beku_rock_name').textContent = 'Batuan Ultramafik';
+        document.getElementById('beku_rock_basis').textContent = 'M ≥ 90% — Gunakan diagram IUGS Ultramafik (Ol-Opx-Cpx)';
+        return;
+    }
+
+    const total = Q + A + P + F;
+    if (total < 5) {
+        document.getElementById('beku_suggestion').classList.add('hidden');
+        return;
+    }
+
+    // Normalize to 100
+    const nQ = (Q / total) * 100;
+    const nA = (A / total) * 100;
+    const nP = (P / total) * 100;
+    const nF = (F / total) * 100;
+
+    let name = '';
+    let basis = '';
+    const isPhaneritic = gran && gran.includes('Fanerik');
+    const prefix = isPhaneritic ? '' : '(Vulkanik) ';
+
+    if (F > 0 && Q > 0) {
+        name = 'Tidak valid'; basis = 'Q dan F tidak dapat hadir bersamaan dalam QAPF';
+    } else if (Q > 0) {
+        const pRatio = (nP / (nP + nA)) * 100;
+        if (nQ >= 60) { name = isPhaneritic ? 'Quartzolite' : 'Quartzolite'; }
+        else if (nQ >= 20) {
+            if (pRatio < 10) name = isPhaneritic ? 'Alkali Feldspar Granite' : 'Alkali Feldspar Rhyolite';
+            else if (pRatio < 35) name = isPhaneritic ? 'Syenogranite' : 'Rhyolite';
+            else if (pRatio < 65) name = isPhaneritic ? 'Monzogranite' : 'Dacite/Rhyolite';
+            else if (pRatio < 90) name = isPhaneritic ? 'Granodiorite' : 'Dacite';
+            else name = isPhaneritic ? 'Tonalite' : 'Dacite';
+        } else if (nQ >= 5) {
+            if (pRatio < 10) name = isPhaneritic ? 'Qtz Alkali Feldspar Syenite' : 'Qtz Trachyte';
+            else if (pRatio < 35) name = isPhaneritic ? 'Qtz Syenite' : 'Qtz Trachyte';
+            else if (pRatio < 65) name = isPhaneritic ? 'Qtz Monzonite' : 'Qtz Latite';
+            else if (pRatio < 90) name = isPhaneritic ? 'Qtz Monzodiorite/Monzogabbro' : 'Qtz Andesite/Basalt';
+            else name = isPhaneritic ? 'Qtz Diorite/Gabbro' : 'Qtz Andesite/Basalt';
+        } else {
+            if (pRatio < 10) name = isPhaneritic ? 'Alkali Feldspar Syenite' : 'Trachyte';
+            else if (pRatio < 35) name = isPhaneritic ? 'Syenite' : 'Trachyte';
+            else if (pRatio < 65) name = isPhaneritic ? 'Monzonite' : 'Latite';
+            else if (pRatio < 90) name = isPhaneritic ? (M > 35 ? 'Monzogabbro' : 'Monzodiorite') : 'Andesite/Basalt';
+            else name = isPhaneritic ? (M > 35 ? 'Gabbro' : 'Diorite') : (M > 35 ? 'Basalt' : 'Andesite');
+        }
+        basis = `QAPF — Q=${nQ.toFixed(0)}%, A=${nA.toFixed(0)}%, P=${nP.toFixed(0)}%, P/(P+A)=${pRatio.toFixed(0)}%`;
+    } else if (F > 0) {
+        name = isPhaneritic ? 'Foid-bearing Rock' : 'Foidite';
+        basis = `QAPF FAP triangle — F=${nF.toFixed(0)}%`;
+    } else {
+        const pRatio = nA + nP > 0 ? (nP / (nP + nA)) * 100 : 50;
+        if (pRatio < 10) name = isPhaneritic ? 'Alkali Feldspar Syenite' : 'Trachyte';
+        else if (pRatio < 35) name = isPhaneritic ? 'Syenite' : 'Trachyte';
+        else if (pRatio < 65) name = isPhaneritic ? 'Monzonite' : 'Latite';
+        else if (pRatio < 90) name = isPhaneritic ? (M > 35 ? 'Monzogabbro' : 'Monzodiorite') : 'Andesite/Basalt';
+        else name = isPhaneritic ? (M > 35 ? 'Gabbro' : 'Diorite') : (M > 35 ? 'Basalt' : 'Andesite');
+        basis = `QAPF — A=${nA.toFixed(0)}%, P=${nP.toFixed(0)}%, P/(P+A)=${pRatio.toFixed(0)}%`;
+    }
+
+    document.getElementById('beku_suggestion').classList.remove('hidden');
+    document.getElementById('beku_rock_name').textContent = prefix + name;
+    document.getElementById('beku_rock_basis').textContent = basis;
+}
+
+['beku_q','beku_a','beku_p','beku_f','beku_m','beku_granularitas'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', suggestRockName);
+    if (el) el.addEventListener('change', suggestRockName);
+});
+
+/* ═══════════════════════════════════════════
+   LOCATION DATA COLLECTOR
+   ═══════════════════════════════════════════ */
+function getLoc(type) {
+    return {
+        nama: document.getElementById(`${type}_lokasi_nama`)?.value || '',
+        tanggal: document.getElementById(`${type}_lokasi_tanggal`)?.value || new Date().toISOString().split('T')[0],
+        latitude: parseFloat(document.getElementById(`${type}_lokasi_lat`)?.value) || null,
+        longitude: parseFloat(document.getElementById(`${type}_lokasi_lng`)?.value) || null,
+        cuaca: document.getElementById(`${type}_lokasi_cuaca`)?.value || '',
+        elevasi: document.getElementById(`${type}_lokasi_elevasi`)?.value || '',
+        traverse: document.getElementById(`${type}_lokasi_traverse`)?.value || '',
+        dimensi: document.getElementById(`${type}_lokasi_dimensi`)?.value || '',
+        strike: document.getElementById(`${type}_lokasi_strike`)?.value || '',
+        dip: document.getElementById(`${type}_lokasi_dip`)?.value || '',
+        pelapukan: document.getElementById(`${type}_lokasi_pelapukan`)?.value || '',
+        kekerasan: document.getElementById(`${type}_lokasi_kekerasan`)?.value || '',
+        catatan: document.getElementById(`${type}_lokasi_catatan`)?.value || '',
+        foto: currentImages[type]
+    };
+}
+
+function getChecked(name) { return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(c => c.value); }
+function getRadio(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ''; }
+function getVal(id) { return document.getElementById(id)?.value || ''; }
+
+/* ═══════════════════════════════════════════
+   GENERATE DESCRIPTIONS
+   ═══════════════════════════════════════════ */
+function generateBeku() {
+    const loc = getLoc('beku');
+    const data = {
+        type: 'beku', location: loc,
+        warna_segar: getVal('beku_warna_segar'), warna_lapuk: getVal('beku_warna_lapuk'),
+        struktur: getChecked('beku_struktur'),
+        kristalisasi: getVal('beku_kristalisasi'), granularitas: getVal('beku_granularitas'),
+        relasi_kristal: getVal('beku_relasi_kristal'), bentuk_kristal: getVal('beku_bentuk_kristal'),
+        tekstur_khusus: getChecked('beku_tekstur_khusus'),
+        q: getVal('beku_q'), a: getVal('beku_a'), p: getVal('beku_p'), f: getVal('beku_f'), m: getVal('beku_m'),
+        color_class: getVal('beku_color_class'),
+        mineral: getChecked('beku_mineral'),
+        rock_name: document.getElementById('beku_rock_name')?.textContent || '',
+        catatan: getVal('beku_catatan'),
+        timestamp: new Date().toISOString()
+    };
+
+    const desc = formatBeku(data);
+    showResult('resultBeku', desc);
+    window.tempData = data;
+}
+
+function formatBeku(d) {
+    return `DESKRIPSI BATUAN BEKU 
+${'═'.repeat(42)}
+LOKASI        : ${d.location.nama || '-'}
+TANGGAL       : ${d.location.tanggal || '-'}
+KOORDINAT     : ${d.location.latitude ? `${d.location.latitude}, ${d.location.longitude}` : '-'}
+ELEVASI       : ${d.location.elevasi ? d.location.elevasi + ' mdpl' : '-'}
+CUACA         : ${d.location.cuaca || '-'}
+SINGKAPAN     : ${d.location.dimensi || '-'}
+PELAPUKAN     : ${d.location.pelapukan || '-'}
+KEKERASAN     : ${d.location.kekerasan || '-'}
+
+── WARNA ──
+  Segar       : ${d.warna_segar || '-'}
+  Lapuk       : ${d.warna_lapuk || '-'}
+
+── STRUKTUR ──
+  ${d.struktur.join(', ') || '-'}
+
+── TEKSTUR ──
+  Kristalisasi    : ${d.kristalisasi || '-'}
+  Granularitas    : ${d.granularitas || '-'}
+  Relasi Kristal  : ${d.relasi_kristal || '-'}
+  Bentuk Kristal  : ${d.bentuk_kristal || '-'}
+  Tekstur Khusus  : ${d.tekstur_khusus.join(', ') || '-'}
+
+── KOMPOSISI MINERAL ──
+  Q (Kuarsa)      : ${d.q || '0'}%
+  A (Alk.Fsp)     : ${d.a || '0'}%
+  P (Plagioklas)  : ${d.p || '0'}%
+  F (Foid)        : ${d.f || '0'}%
+  M (Colour Idx)  : ${d.m || '0'}% → ${d.color_class || '-'}
+  Mineral ID      : ${d.mineral.join(', ') || '-'}
+
+── NAMA BATUAN (IUGS/QAPF) ──
+  ${d.rock_name || '(belum ditentukan)'}
+
+── CATATAN ──
+  Lapangan: ${d.location.catatan || '-'}
+  Batuan  : ${d.catatan || '-'}`;
+}
+
+function generateSedimen() {
+    const loc = getLoc('sedimen');
+    const data = {
+        type: 'sedimen', location: loc,
+        jenis: getVal('sedimen_jenis'),
+        warna_segar: getVal('sedimen_warna_segar'), warna_lapuk: getVal('sedimen_warna_lapuk'),
+        struktur: getChecked('sedimen_struktur'),
+        ukuran: getVal('sedimen_ukuran'), sorting: getVal('sedimen_sorting'),
+        roundness: getVal('sedimen_roundness'), sphericity: getVal('sedimen_sphericity'),
+        fabric: getVal('sedimen_fabric'), maturity: getVal('sedimen_maturity'),
+        semen: getChecked('sedimen_semen'),
+        dunham: getVal('sedimen_dunham'), folk: getVal('sedimen_folk'),
+        pyro_size: getVal('sedimen_pyro_size'),
+        bedding: getVal('sedimen_lokasi_bedding'),
+        hcl: getRadio('sedimen_hcl'),
+        komposisi: getVal('sedimen_komposisi'), catatan: getVal('sedimen_catatan'),
+        timestamp: new Date().toISOString()
+    };
+
+    const desc = formatSedimen(data);
+    showResult('resultSedimen', desc);
+    window.tempData = data;
+}
+
+function formatSedimen(d) {
+    let extra = '';
+    if (d.jenis === 'Klastik') {
+        extra = `
+── TEKSTUR KLASTIK (Wentworth, 1922) ──
+  Ukuran Butir                       : ${d.ukuran || '-'}
+  Pemilahan                          : ${d.sorting || '-'}
+  Kebundaran                         : ${d.roundness || '-'}
+  Derajat Kebolaan (Sphericity)      : ${d.sphericity || '-'}
+  Kemas                              : ${d.fabric || '-'}
+  Kematangan                         : ${d.maturity || '-'}
+  Semen/Matriks                      : ${d.semen?.join(', ') || '-'}`;
+    } else if (d.jenis === 'Karbonat') {
+        extra = `
+── KLASIFIKASI KARBONAT ──
+  Dunham (1962)   : ${d.dunham || '-'}
+  Folk (1959)     : ${d.folk || '-'}`;
+    } else if (d.jenis === 'Vulkaniklastik') {
+        extra = `
+── KLASIFIKASI PIROKLASTIK (Schmid, 1981) ──
+  Ukuran Fragmen  : ${d.pyro_size || '-'}`;
+    }
+
+    return `DESKRIPSI BATUAN SEDIMEN
+${'═'.repeat(42)}
+LOKASI        : ${d.location.nama || '-'}
+TANGGAL       : ${d.location.tanggal || '-'}
+KOORDINAT     : ${d.location.latitude ? `${d.location.latitude}, ${d.location.longitude}` : '-'}
+ELEVASI       : ${d.location.elevasi ? d.location.elevasi + ' mdpl' : '-'}
+STRIKE/DIP    : ${d.location.strike && d.location.dip ? `N ${d.location.strike}° E/${d.location.dip}°` : '-'}
+CUACA         : ${d.location.cuaca || '-'}
+PELAPUKAN     : ${d.location.pelapukan || '-'}
+
+── JENIS ──
+  ${d.jenis || '-'}
+
+── WARNA ──
+  Segar       : ${d.warna_segar || '-'}
+  Lapuk       : ${d.warna_lapuk || '-'}
+
+── STRUKTUR SEDIMEN ──
+  ${d.struktur.join(', ') || '-'}
+  Ketebalan Lapisan : ${d.bedding || '-'}
+${extra}
+
+── REAKSI HCl ──
+  ${d.hcl || '-'}
+
+── KOMPOSISI ──
+  ${d.komposisi || '-'}
+
+── CATATAN ──
+  Lapangan: ${d.location.catatan || '-'}
+  Batuan  : ${d.catatan || '-'}`;
+}
+
+function generateMetamorf() {
+    const loc = getLoc('metamorf');
+    const data = {
+        type: 'metamorf', location: loc,
+        warna_segar: getVal('metamorf_warna_segar'), warna_lapuk: getVal('metamorf_warna_lapuk'),
+        struktur: getVal('metamorf_struktur'),
+        foliasi: getRadio('metamorf_foliasi'), nonfoliasi: getRadio('metamorf_nonfoliasi'),
+        strike: getVal('metamorf_strike'), dip: getVal('metamorf_dip'),
+        tekstur: getChecked('metamorf_tekstur'),
+        mineral: getChecked('metamorf_mineral'),
+        derajat: getVal('metamorf_derajat'), tipe: getVal('metamorf_tipe'),
+        protolith: getVal('metamorf_protolith'),
+        catatan: getVal('metamorf_catatan'),
+        timestamp: new Date().toISOString()
+    };
+
+    const desc = formatMetamorf(data);
+    showResult('resultMetamorf', desc);
+    window.tempData = data;
+}
+
+function formatMetamorf(d) {
+    let folInfo = '';
+    if (d.foliasi) folInfo = `\n  Jenis Foliasi   : ${d.foliasi}\n  Strike/Dip      : ${d.strike || '-'} / ${d.dip || '-'}`;
+    if (d.nonfoliasi) folInfo = `\n  Tipe            : ${d.nonfoliasi}`;
+
+    return `DESKRIPSI BATUAN METAMORF 
+${'═'.repeat(42)}
+LOKASI        : ${d.location.nama || '-'}
+TANGGAL       : ${d.location.tanggal || '-'}
+KOORDINAT     : ${d.location.latitude ? `${d.location.latitude}, ${d.location.longitude}` : '-'}
+ELEVASI       : ${d.location.elevasi ? d.location.elevasi + ' mdpl' : '-'}
+PELAPUKAN     : ${d.location.pelapukan || '-'}
+
+── WARNA ──
+  Segar       : ${d.warna_segar || '-'}
+  Lapuk       : ${d.warna_lapuk || '-'}
+
+── STRUKTUR ──
+  ${d.struktur || '-'}${folInfo}
+
+── TEKSTUR ──
+  ${d.tekstur.join(', ') || '-'}
+
+── MINERAL ──
+  ${d.mineral.join(', ') || '-'}
+
+── METAMORFISME ──
+  Derajat         : ${d.derajat || '-'}
+  Tipe            : ${d.tipe || '-'}
+  Protolith       : ${d.protolith || '-'}
+
+── CATATAN ──
+  Lapangan: ${d.location.catatan || '-'}
+  Batuan  : ${d.catatan || '-'}`;
+}
+
+function showResult(id, text) {
+    const el = document.getElementById(id);
+    el.innerHTML = `<div class="result-header"><span>📋 HASIL DESKRIPSI</span><button class="copy-btn" onclick="copyResult(this)">📋 Copy</button></div>${text}`;
+    el.classList.remove('hidden');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyResult(btn) {
+    const box = btn.closest('.result-box');
+    const text = box.textContent.replace('📋 HASIL DESKRIPSI📋 Copy', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy', 1500);
+    });
+}
+
+/* ═══════════════════════════════════════════
+   SAVE & MANAGE
+   ═══════════════════════════════════════════ */
+async function saveData(type) {
+    if (!window.tempData) { toast('Generate deskripsi dulu!', 'error'); return; }
+    try {
+        window.tempData.id = Date.now();
+        await saveToDB(window.tempData);
+        toast('Data berhasil disimpan!', 'success');
+        resetForm(type);
+        window.tempData = null;
+        // Refresh data list if currently viewing data section
+        if (document.getElementById('data').classList.contains('active')) {
+            loadDataList();
+        }
+    } catch (e) { toast('Gagal simpan: ' + e.message, 'error'); }
+}
+
+async function loadDataList() {
+    try {
+        const data = await getAllData();
+        const q = (document.getElementById('searchData')?.value || '').toLowerCase();
+        const filtered = data.filter(i =>
+            (i.location?.nama || '').toLowerCase().includes(q) ||
+            (i.location?.tanggal || '').includes(q) ||
+            (i.type || '').includes(q)
+        );
+
+        // Sort the filtered data
+        filtered.sort((a, b) => {
+            let valA, valB;
+            if (currentSort.column === 'tanggal') {
+                valA = new Date(a.location?.tanggal || '1970-01-01');
+                valB = new Date(b.location?.tanggal || '1970-01-01');
+            } else if (currentSort.column === 'lokasi') {
+                valA = (a.location?.nama || '').toLowerCase();
+                valB = (b.location?.nama || '').toLowerCase();
+            } else if (currentSort.column === 'tipe') {
+                valA = a.type || '';
+                valB = b.type || '';
+            } else {
+                valA = '';
+                valB = '';
+            }
+            if (valA < valB) return currentSort.order === 'asc' ? -1 : 1;
+            if (valA > valB) return currentSort.order === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        const c = document.getElementById('dataList');
+        if (!filtered.length) { c.innerHTML = '<p style="text-align:center;color:var(--stone-400);padding:2rem;">Belum ada data</p>'; updateStats(data); return; }
+
+        let html = '<table><thead><tr><th onclick="sortDataTable(\'tanggal\')" class="sortable">Tanggal</th><th onclick="sortDataTable(\'lokasi\')" class="sortable">Lokasi</th><th onclick="sortDataTable(\'tipe\')" class="sortable">Tipe</th><th>Koordinat</th><th>📷</th><th>Aksi</th></tr></thead><tbody>';
+        filtered.forEach(i => {
+            html += `<tr>
+                <td>${i.location?.tanggal || '-'}</td>
+                <td>${i.location?.nama || '-'}</td>
+                <td><span class="badge badge-${i.type}">${i.type.toUpperCase()}</span></td>
+                <td style="font-family:var(--font-mono);font-size:0.78rem;">${i.location?.latitude ? `${i.location.latitude.toFixed(4)}, ${i.location.longitude.toFixed(4)}` : '-'}</td>
+                <td>${i.location?.foto ? '✅' : '—'}</td>
+                <td>
+                    <button class="btn btn-outline" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="viewData(${i.id})">Lihat</button>
+                    <button class="btn btn-danger" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="deleteItem(${i.id})">Hapus</button>
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        c.innerHTML = html;
+        updateSortIndicatorsForDataList();
+        allData = data;
+        updateStats(data);
+    } catch (e) { document.getElementById('dataList').innerHTML = '<p class="alert alert-error">Gagal memuat</p>'; }
+}
+
+async function viewData(id) {
+    const data = await getAllData();
+    const item = data.find(d => d.id === id);
+    if (!item) return;
+    let content = '';
+    if (item.type === 'beku') content = formatBeku(item);
+    else if (item.type === 'sedimen') content = formatSedimen(item);
+    else if (item.type === 'metamorf') content = formatMetamorf(item);
+    let html = `<pre style="white-space:pre-wrap;font-family:var(--font-mono);font-size:0.82rem;line-height:1.7;">${content}</pre>`;
+    if (item.location?.foto) html += `<img src="${item.location.foto}" style="max-width:100%;margin-top:1rem;border-radius:8px;">`;
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('viewModal').classList.add('active');
+}
+
+async function deleteItem(id) {
+    if (!confirm('Hapus data ini?')) return;
+    await deleteData(id);
+    loadDataList();
+    toast('Data dihapus', 'info');
+}
+
+async function updateStats(data) {
+    if (!data) data = await getAllData();
+    const b = data.filter(d => d.type === 'beku').length;
+    const s = data.filter(d => d.type === 'sedimen').length;
+    const m = data.filter(d => d.type === 'metamorf').length;
+    const img = data.filter(d => d.location?.foto).length;
+    document.getElementById('statTotal').textContent = data.length;
+    document.getElementById('statBeku').textContent = b;
+    document.getElementById('statSedimen').textContent = s;
+    document.getElementById('statMetamorf').textContent = m;
+    document.getElementById('totalData').textContent = data.length;
+    document.getElementById('totalImages').textContent = img;
+    const sz = new Blob([JSON.stringify(data)]).size;
+    document.getElementById('dbSize').textContent = (sz / 1024 / 1024).toFixed(2) + ' MB';
+}
+
+function resetForm(type) {
+    if (!confirm('Reset semua field?')) return;
+    document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
+    currentImages[type] = null;
+    removeImage(type);
+    document.querySelectorAll('.result-box').forEach(b => b.classList.add('hidden'));
+    document.getElementById(`${type}_coordDisplay`)?.classList.add('hidden');
+    if (type === 'beku') {
+        document.getElementById('beku_suggestion')?.classList.add('hidden');
+        document.getElementById('beku_color_class').value = '';
+    }
+    window.tempData = null;
+}
+
+// Fungsi Utama Render Tabel
+function renderDataTable() {
+    const tbody = document.getElementById('table-body');
+    const searchQuery = document.getElementById('searchData')?.value?.toLowerCase() || '';
+    
+    // Filter berdasarkan pencarian
+    let filteredData = allData.filter(item => {
+        return (item.lokasi && item.lokasi.toLowerCase().includes(searchQuery)) ||
+               (item.catatan && item.catatan.toLowerCase().includes(searchQuery));
+    });
+
+    // Lakukan Sorting
+    filteredData.sort((a, b) => {
+        let valA = a[currentSort.column] || '';
+        let valB = b[currentSort.column] || '';
+
+        // Khusus tanggal, pastikan format YYYY-MM-DD untuk sorting yang benar
+        if (currentSort.column === 'tanggal') {
+            valA = new Date(valA);
+            valB = new Date(valB);
+        } else {
+            valA = valA.toString().toLowerCase();
+            valB = valB.toString().toLowerCase();
+        }
+
+        if (valA < valB) return currentSort.order === 'asc' ? -1 : 1;
+        if (valA > valB) return currentSort.order === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    // Update Statistik
+    updateStats(filteredData);
+
+    // Render Rows
+    tbody.innerHTML = '';
+    if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tidak ada data ditemukan</td></tr>';
+        return;
+    }
+
+    filteredData.forEach((data, index) => {
+        const row = tbody.insertRow();
+        // Tentukan Icon berdasarkan Tipe
+        let typeIcon = '🪨';
+        if(data.tipe === 'Beku') typeIcon = '🔥';
+        if(data.tipe === 'Sedimen') typeIcon = '📚';
+        if(data.tipe === 'Metamorf') typeIcon = '💎';
+
+        row.innerHTML = `
+            <td>${typeIcon} ${data.tipe}</td>
+            <td>${data.tanggal}</td>
+            <td>${data.lokasi || '-'}</td>
+            <td style="font-size:0.8em;">${data.lat || '-'}, ${data.lon || '-'}</td>
+            <td>
+                <button onclick="viewData(${index})" style="font-size:0.8em;">👁️</button>
+                <button onclick="deleteData(${data.id})" style="font-size:0.8em; color:red;">🗑️</button>
+            </td>
+        `;
+    });
+
+    // Update Indikator Panah di Header
+    updateSortIndicators();
+}
+
+// Fungsi Handle Klik Sortir
+function sortTable(column) {
+    if (currentSort.column === column) {
+        // Toggle order jika kolom sama
+        currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+    } else {
+        // Ganti kolom, default asc
+        currentSort.column = column;
+        currentSort.order = 'asc';
+    }
+    renderDataTable();
+}
+
+function sortDataTable(column) {
+    if (currentSort.column === column) {
+        currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentSort.column = column;
+        currentSort.order = 'asc';
+    }
+    loadDataList();
+}
+
+// Update Visual Panah di Header
+function updateSortIndicators() {
+    const headers = document.querySelectorAll('#data-table th');
+    headers.forEach(th => th.classList.remove('th-sort-asc', 'th-sort-desc'));
+    
+    // Cari header yang aktif (berdasarkan onclick attribute text content matching)
+    // Cara sederhana: mapping index atau text
+    const headerMap = {
+        'tipe': 0,
+        'tanggal': 1,
+        'lokasi': 2,
+        'koordinat': 3
+    };
+    
+    const activeIndex = headerMap[currentSort.column];
+    if (activeIndex !== undefined && headers[activeIndex]) {
+        headers[activeIndex].classList.add(currentSort.order === 'asc' ? 'th-sort-asc' : 'th-sort-desc');
+    }
+}
+
+function updateSortIndicatorsForDataList() {
+    const headers = document.querySelectorAll('#dataList th');
+    headers.forEach(th => th.classList.remove('th-sort-asc', 'th-sort-desc'));
+    
+    const headerMap = {
+        'tanggal': 0,
+        'lokasi': 1,
+        'tipe': 2
+    };
+    
+    const activeIndex = headerMap[currentSort.column];
+    if (activeIndex !== undefined && headers[activeIndex]) {
+        headers[activeIndex].classList.add(currentSort.order === 'asc' ? 'th-sort-asc' : 'th-sort-desc');
+    }
+}
+
+// Update Statistik Box
+/* Duplicate updateStats removed; using main updateStats earlier in the code */
+
+// Event Listener untuk Pencarian
+document.getElementById('searchData')?.addEventListener('input', renderDataTable);
+
+// --- Catatan Integrasi ---
+// Pastikan saat Anda mengambil data dari IndexedDB (fungsi openDB/getAll), 
+// Anda menyimpannya ke variabel 'allData' lalu memanggil renderDataTable().
+// Contoh:
+// getAllDataFromIndexedDB().then(data => {
+//     allData = data;
+//     renderDataTable();
+// });
+function closeModal() { document.getElementById('viewModal').classList.remove('active'); }
+window.onclick = (e) => { if (e.target === document.getElementById('viewModal')) closeModal(); };
+
+/* ═══════════════════════════════════════════
+   EXPORT
+   ═══════════════════════════════════════════ */
+function formatDeskripsi(item) {
+    if (item.type === 'beku') return formatBeku(item);
+    if (item.type === 'sedimen') return formatSedimen(item);
+    if (item.type === 'metamorf') return formatMetamorf(item);
+    return '';
+}
+
+async function exportPDF() {
+    try {
+        const { jsPDF } = window.jspdf;
+        const data = await getAllData();
+        if (!data.length) { toast('Tidak ada data', 'error'); return; }
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        const mg = 18;
+        const mgR = 18;
+        const cw = pw - mg - mgR;
+
+        /* ── Color palette ── */
+        const COL = {
+            headerBg: [30, 27, 24],
+            headerGold: [251, 191, 36],
+            headerSub: [190, 190, 185],
+            sectionBg: [245, 241, 235],
+            sectionText: [120, 83, 9],
+            label: [110, 110, 110],
+            value: [28, 25, 23],
+            line: [215, 210, 200],
+            accent: [180, 130, 30],
+            footerText: [160, 155, 145],
+            white: [255, 255, 255]
+        };
+
+        /* ── Helpers ── */
+        let y = 35;
+        function setCol(c) { pdf.setTextColor(c[0], c[1], c[2]); }
+        function setFill(c) { pdf.setFillColor(c[0], c[1], c[2]); }
+        function setDraw(c) { pdf.setDrawColor(c[0], c[1], c[2]); }
+
+        function checkPage(need) {
+            if (y + need > ph - 20) { addFooter(); pdf.addPage(); y = 15; return true; }
+            return false;
+        }
+
+        let currentIdx;
+
+        function addFooter() {
+            /* bottom line */
+            setDraw(COL.line); pdf.setLineWidth(0.3);
+            pdf.line(mg, ph - 14, pw - mgR, ph - 14);
+            /* left: app name */
+            pdf.setFontSize(7); pdf.setFont('helvetica', 'normal');
+            setCol(COL.footerText);
+            pdf.text('', mg, ph - 9);
+            /* center: date */
+            pdf.text(new Date().toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' }), pw / 2, ph - 9, { align: 'center' });
+            /* right: page */
+            pdf.text(`${currentIdx + 1} / ${data.length}`, pw - mgR, ph - 9, { align: 'right' });
+        }
+
+        /* ── Draw header band ── */
+        function drawHeader(item) {
+            setFill(COL.headerBg);
+            pdf.rect(0, 0, pw, 28, 'F');
+            /* gold accent bar */
+            setFill(COL.headerGold);
+            pdf.rect(0, 28, pw, 1.2, 'F');
+
+            setCol(COL.headerGold);
+            pdf.setFontSize(15); pdf.setFont('helvetica', 'bold');
+            pdf.text('MAPPING TERPADU - TEKNIK GEOLOGI UIR', mg, 11);
+
+            pdf.setFontSize(8.5); pdf.setFont('helvetica', 'normal');
+            setCol(COL.headerSub);
+            const typeLabel = { beku: 'BATUAN BEKU', sedimen: 'BATUAN SEDIMEN', metamorf: 'BATUAN METAMORF' };
+            pdf.text('Deskripsi Lapangan  |  ' + (typeLabel[item.type] || item.type.toUpperCase()), mg, 18);
+
+            pdf.setFontSize(7.5);
+            setCol(COL.headerGold);
+            const locStr = item.location?.nama || '-';
+            const dateStr = item.location?.tanggal || '-';
+            pdf.text(`${locStr}   |   ${dateStr}`, mg, 24.5);
+        }
+
+        /* ── Section heading with background ── */
+        function drawSection(title) {
+            checkPage(12);
+            y += 3;
+            setFill(COL.sectionBg);
+            pdf.rect(mg, y - 3.8, cw, 6.5, 'F');
+            /* left accent bar */
+            setFill(COL.accent);
+            pdf.rect(mg, y - 3.8, 1.5, 6.5, 'F');
+            pdf.setFontSize(8.5); pdf.setFont('helvetica', 'bold');
+            setCol(COL.sectionText);
+            pdf.text(title.toUpperCase(), mg + 4, y + 0.8);
+            y += 7;
+        }
+
+        /* ── Key-value row ── */
+        function drawRow(label, value, indent) {
+            if (!value && value !== 0) value = '-';
+            value = String(value);
+            checkPage(6);
+            const xLabel = mg + (indent ? 5 : 0);
+            pdf.setFontSize(8); pdf.setFont('helvetica', 'normal');
+            setCol(COL.label);
+            pdf.text(label, xLabel, y);
+            setCol(COL.value); pdf.setFont('helvetica', 'bold');
+            const valX = mg + 52;
+            const wrapped = pdf.splitTextToSize(': ' + value, cw - 54);
+            wrapped.forEach((line, li) => {
+                pdf.text(line, valX, y);
+                if (li < wrapped.length - 1) { y += 4.2; checkPage(5); }
+            });
+            y += 4.5;
+        }
+
+        /* ── Thin divider line ── */
+        function drawDivider() {
+            setDraw(COL.line); pdf.setLineWidth(0.2);
+            pdf.line(mg, y, pw - mgR, y);
+            y += 3;
+        }
+
+        /* ── Arr helper ── */
+        function arrStr(v) { return Array.isArray(v) ? v.join(', ') : (v || '-'); }
+
+        /* ═══════════════════════════════════════
+           BUILD PDF PAGES
+           ═══════════════════════════════════════ */
+        data.forEach((item, idx) => {
+            if (idx > 0) pdf.addPage();
+            currentIdx = idx;
+            drawHeader(item);
+            y = 35;
+
+            const L = item.location || {};
+
+            /* ── LOKASI & INFO UMUM ── */
+            drawSection('Informasi Lokasi');
+            drawRow('Lokasi / Stasiun', L.nama);
+            drawRow('Tanggal', L.tanggal);
+            if (L.latitude) drawRow('Koordinat', `${L.latitude}, ${L.longitude}`);
+            drawRow('Elevasi', L.elevasi ? L.elevasi + ' mdpl' : '-');
+            drawRow('Cuaca', L.cuaca);
+            drawRow('Strike/Dip', L.strike && L.dip ? `N ${L.strike}° E/${L.dip}°` : '-');
+            if (L.traverse) drawRow('Metode Traverse', L.traverse);
+            if (L.dimensi) drawRow('Dimensi Singkapan', L.dimensi);
+            drawRow('Pelapukan', L.pelapukan);
+            drawRow('Kekerasan', L.kekerasan);
+            if (L.catatan) drawRow('Catatan Lapangan', L.catatan);
+
+            /* ── WARNA ── */
+            drawSection('Warna');
+            drawRow('Warna Segar', item.warna_segar);
+            drawRow('Warna Lapuk', item.warna_lapuk);
+
+            /* ═══ BEKU ═══ */
+            if (item.type === 'beku') {
+                drawSection('Struktur');
+                drawRow('Struktur', arrStr(item.struktur));
+
+                drawSection('Tekstur');
+                drawRow('Kristalisasi', item.kristalisasi);
+                drawRow('Granularitas', item.granularitas);
+                drawRow('Relasi Kristal', item.relasi_kristal);
+                drawRow('Bentuk Kristal', item.bentuk_kristal);
+                drawRow('Tekstur Khusus', arrStr(item.tekstur_khusus));
+
+                drawSection('Komposisi Mineral (QAPF)');
+                drawRow('Q (Kuarsa)', (item.q || '0') + '%');
+                drawRow('A (Alkali Feldspar)', (item.a || '0') + '%');
+                drawRow('P (Plagioklas)', (item.p || '0') + '%');
+                drawRow('F (Foid)', (item.f || '0') + '%');
+                drawRow('M (Colour Index)', (item.m || '0') + '%  ->  ' + (item.color_class || '-'));
+                drawRow('Mineral Teridentifikasi', arrStr(item.mineral));
+
+                drawSection('Nama Batuan (IUGS/QAPF)');
+                checkPage(8);
+                pdf.setFontSize(11); pdf.setFont('helvetica', 'bold');
+                setCol(COL.value);
+                pdf.text(item.rock_name || '(belum ditentukan)', mg + 4, y);
+                y += 7;
+            }
+
+            /* ═══ SEDIMEN ═══ */
+            if (item.type === 'sedimen') {
+                drawSection('Jenis Batuan Sedimen');
+                drawRow('Sub-jenis', item.jenis);
+
+                drawSection('Struktur Sedimen');
+                drawRow('Struktur', arrStr(item.struktur));
+                drawRow('Ketebalan Lapisan', item.bedding);
+
+                if (item.jenis === 'Klastik') {
+                    drawSection('Tekstur Klastik (Wentworth, 1922)');
+                    drawRow('Ukuran Butir', item.ukuran);
+                    drawRow('Pemilahan (Sorting)', item.sorting);
+                    drawRow('Kebundaran (Roundness)', item.roundness);
+                    drawRow('Derajat Kebolaan (Sphericity)', item.sphericity);
+                    drawRow('Kemas (Fabric)', item.fabric);
+                    drawRow('Kematangan Tekstural', item.maturity);
+                    drawRow('Semen / Matriks', arrStr(item.semen));
+                }
+                if (item.jenis === 'Karbonat') {
+                    drawSection('Klasifikasi Karbonat');
+                    drawRow('Dunham (1962)', item.dunham);
+                    drawRow('Folk (1959)', item.folk);
+                }
+                if (item.jenis === 'Vulkaniklastik') {
+                    drawSection('Piroklastik (Schmid, 1981)');
+                    drawRow('Ukuran Fragmen', item.pyro_size);
+                }
+
+                drawSection('Reaksi & Komposisi');
+                drawRow('Reaksi HCl', item.hcl);
+                drawRow('Komposisi', item.komposisi);
+            }
+
+            /* ═══ METAMORF ═══ */
+            if (item.type === 'metamorf') {
+                drawSection('Struktur');
+                drawRow('Struktur', item.struktur);
+                if (item.foliasi) {
+                    drawRow('Jenis Foliasi', item.foliasi);
+                    if (item.strike || item.dip) drawRow('Strike / Dip', (item.strike || '-') + ' / ' + (item.dip || '-'));
+                }
+                if (item.nonfoliasi) drawRow('Tipe Non-foliasi', item.nonfoliasi);
+
+                drawSection('Tekstur');
+                drawRow('Tekstur', arrStr(item.tekstur));
+
+                drawSection('Mineral');
+                drawRow('Mineral Teridentifikasi', arrStr(item.mineral));
+
+                drawSection('Metamorfisme (IUGS SCMR)');
+                drawRow('Derajat', item.derajat);
+                drawRow('Tipe Metamorfisme', item.tipe);
+                drawRow('Protolith', item.protolith);
+            }
+
+            /* ── CATATAN BATUAN ── */
+            if (item.catatan) {
+                drawSection('Catatan Batuan');
+                checkPage(8);
+                pdf.setFontSize(8); pdf.setFont('helvetica', 'normal');
+                setCol(COL.value);
+                const wrappedNote = pdf.splitTextToSize(item.catatan, cw - 4);
+                wrappedNote.forEach(line => {
+                    checkPage(5);
+                    pdf.text(line, mg + 2, y); y += 4.2;
+                });
+                y += 2;
+            }
+
+            /* ── FOTO ── */
+            if (L.foto) {
+                drawSection('Foto Lapangan');
+                checkPage(50);
+                try {
+                    const props = pdf.getImageProperties(L.foto);
+                    const maxW = Math.min(cw - 4, 70);
+                    const maxH = 50;
+                    let iw = maxW;
+                    let ih = (props.height * iw) / props.width;
+                    if (ih > maxH) { ih = maxH; iw = (props.width * ih) / props.height; }
+                    if (y + ih > ph - 22) { addFooter(); pdf.addPage(); y = 15; }
+                    /* photo border */
+                    setDraw(COL.line); pdf.setLineWidth(0.4);
+                    pdf.rect(mg + 1.5, y - 0.5, iw + 1, ih + 1, 'S');
+                    pdf.addImage(L.foto, 'JPEG', mg + 2, y, iw, ih);
+                    y += ih + 5;
+                } catch(e) {}
+            }
+
+            addFooter();
+        });
+
+        pdf.save(`litologiku_${new Date().toISOString().split('T')[0]}.pdf`);
+        toast('PDF berhasil diexport', 'success');
+    } catch (e) { toast('Gagal export PDF: ' + e.message, 'error'); }
+}
+
+function exportCSV() {
+    getAllData().then(data => {
+        if (!data.length) { toast('Tidak ada data','error'); return; }
+
+        /* ── Helper: escape CSV value ── */
+        const esc = (v) => {
+            if (v === null || v === undefined) return '';
+            let s = String(v);
+            if (Array.isArray(v)) s = v.join('; ');
+            if (s.includes(',') || s.includes('"') || s.includes('\n')) return `"${s.replace(/"/g, '""')}"`;
+            return s;
+        };
+
+        /* ── All column headers (comprehensive) ── */
+        const headers = [
+            // ── UMUM / LOKASI ──
+            'ID', 'Tipe_Batuan', 'Timestamp',
+            'Lokasi_Nama', 'Tanggal', 'Latitude', 'Longitude',
+            'Elevasi_mdpl', 'Cuaca', 'Traverse', 'Dimensi_Singkapan', 'Strike', 'Dip',
+            'Pelapukan', 'Kekerasan', 'Catatan_Lokasi', 'Foto',
+
+            // ── WARNA ──
+            'Warna_Segar', 'Warna_Lapuk',
+
+            // ── BEKU: Struktur & Tekstur ──
+            'Beku_Struktur', 'Beku_Kristalisasi', 'Beku_Granularitas',
+            'Beku_Relasi_Kristal', 'Beku_Bentuk_Kristal', 'Beku_Tekstur_Khusus',
+
+            // ── BEKU: QAPF Komposisi ──
+            'Beku_Q_Persen', 'Beku_A_Persen', 'Beku_P_Persen',
+            'Beku_F_Persen', 'Beku_M_Persen', 'Beku_Colour_Index',
+            'Beku_Mineral', 'Beku_Nama_Batuan_QAPF',
+
+            // ── SEDIMEN: Umum ──
+            'Sedimen_Jenis', 'Sedimen_Struktur',
+
+            // ── SEDIMEN: Klastik (Wentworth) ──
+            'Sedimen_Ukuran_Butir', 'Sedimen_Sorting', 'Sedimen_Roundness',
+            'Sedimen_Sphericity', 'Sedimen_Fabric', 'Sedimen_Maturity',
+            'Sedimen_Semen_Matriks',
+
+            // ── SEDIMEN: Karbonat ──
+            'Sedimen_Dunham', 'Sedimen_Folk',
+
+            // ── SEDIMEN: Vulkaniklastik ──
+            'Sedimen_Pyro_Size',
+
+            // ── SEDIMEN: Lainnya ──
+            'Sedimen_Bedding', 'Sedimen_Reaksi_HCl', 'Sedimen_Komposisi',
+
+            // ── METAMORF ──
+            'Meta_Struktur', 'Meta_Foliasi', 'Meta_NonFoliasi',
+            'Meta_Strike', 'Meta_Dip',
+            'Meta_Tekstur', 'Meta_Mineral',
+            'Meta_Derajat', 'Meta_Tipe_Metamorfisme', 'Meta_Protolith',
+
+            // ── CATATAN BATUAN ──
+            'Catatan_Batuan'
+        ];
+
+        /* ── Map each record to a row ── */
+        const rows = data.map(i => {
+            const L = i.location || {};
+            const t = i.type || '';
+
+            return [
+                // ── UMUM / LOKASI ──
+                i.id, t, i.timestamp || '',
+                L.nama, L.tanggal, L.latitude, L.longitude,
+                L.elevasi, L.cuaca, L.traverse, L.dimensi, L.strike, L.dip,
+                L.pelapukan, L.kekerasan, L.catatan, L.foto ? 'Ya' : 'Tidak',
+
+                // ── WARNA ──
+                i.warna_segar, i.warna_lapuk,
+
+                // ── BEKU ──
+                t === 'beku' ? i.struktur : '',
+                t === 'beku' ? i.kristalisasi : '',
+                t === 'beku' ? i.granularitas : '',
+                t === 'beku' ? i.relasi_kristal : '',
+                t === 'beku' ? i.bentuk_kristal : '',
+                t === 'beku' ? i.tekstur_khusus : '',
+                t === 'beku' ? i.q : '',
+                t === 'beku' ? i.a : '',
+                t === 'beku' ? i.p : '',
+                t === 'beku' ? i.f : '',
+                t === 'beku' ? i.m : '',
+                t === 'beku' ? i.color_class : '',
+                t === 'beku' ? i.mineral : '',
+                t === 'beku' ? i.rock_name : '',
+
+                // ── SEDIMEN ──
+                t === 'sedimen' ? i.jenis : '',
+                t === 'sedimen' ? i.struktur : '',
+                t === 'sedimen' ? i.strike : '',
+                t === 'sedimen' ? i.dip : '',
+                t === 'sedimen' ? i.ukuran : '',
+                t === 'sedimen' ? i.sorting : '',
+                t === 'sedimen' ? i.roundness : '',
+                t === 'sedimen' ? i.sphericity : '',
+                t === 'sedimen' ? i.fabric : '',
+                t === 'sedimen' ? i.maturity : '',
+                t === 'sedimen' ? i.semen : '',
+                t === 'sedimen' ? i.dunham : '',
+                t === 'sedimen' ? i.folk : '',
+                t === 'sedimen' ? i.pyro_size : '',
+                t === 'sedimen' ? i.bedding : '',
+                t === 'sedimen' ? i.hcl : '',
+                t === 'sedimen' ? i.komposisi : '',
+
+                // ── METAMORF ──
+                t === 'metamorf' ? i.struktur : '',
+                t === 'metamorf' ? i.foliasi : '',
+                t === 'metamorf' ? i.nonfoliasi : '',
+                t === 'metamorf' ? i.strike : '',
+                t === 'metamorf' ? i.dip : '',
+                t === 'metamorf' ? i.tekstur : '',
+                t === 'metamorf' ? i.mineral : '',
+                t === 'metamorf' ? i.derajat : '',
+                t === 'metamorf' ? i.tipe : '',
+                t === 'metamorf' ? i.protolith : '',
+
+                // ── CATATAN BATUAN ──
+                i.catatan
+            ].map(esc);
+        });
+
+        const csv = [headers.map(esc), ...rows].map(r => r.join(',')).join('\n');
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `litologiku_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        toast('CSV diexport (semua kolom)','success');
+    });
+}
+
+function exportJSON() {
+    getAllData().then(data => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `litologiku_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        toast('JSON diexport','success');
+    });
+}
+
+function importData(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+        try {
+            const arr = JSON.parse(ev.target.result);
+            if (!Array.isArray(arr)) throw new Error('Format tidak valid');
+            let c = 0;
+            for (const item of arr) { try { await saveToDB(item); c++; } catch(e) {} }
+            toast(`Berhasil import ${c} data`, 'success');
+            loadDataList();
+        } catch (e) { toast('Gagal import: ' + e.message, 'error'); }
+    };
+    reader.readAsText(f);
+}
+
+async function clearAllData() {
+    if (!confirm('⚠️ SEMUA data akan dihapus permanen!')) return;
+    if (!confirm('Yakin? Tidak dapat dibatalkan.')) return;
+    await clearDB();
+    toast('Semua data dihapus', 'info');
+    loadDataList();
+    updateStats();
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════ */
+window.onload = async function() {
+    try {
+        await initDB();
+        updateStats();
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(i => { if (!i.value) i.value = today; });
+    } catch (e) {
+        console.error('DB Error:', e);
+        toast('Gagal inisialisasi database', 'error');
+    }
+};
+</script>
+
+<!-- ═══════════════════════════════════════════
+     PWA — Install Banner
+     ═══════════════════════════════════════════ -->
+<div id="pwa-install-banner" role="dialog" aria-label="Install LitologiKu Pro">
+    <div class="pwa-icon">🪨</div>
+    <div class="pwa-text">
+        <strong>Install LitologiKu Pro</strong>
+        <span>Simpan ke layar utama — pakai offline di lapangan!</span>
+    </div>
+    <button id="pwa-install-btn" onclick="pwaInstall()">Install</button>
+    <button id="pwa-dismiss-btn" onclick="pwaDismiss()" aria-label="Tutup">✕</button>
+</div>
+
+<!-- PWA — Update Banner -->
+<div id="pwa-update-banner" role="alert">
+    <span>⚡ Versi baru tersedia</span>
+    <button id="pwa-update-btn" onclick="pwaUpdate()">Perbarui</button>
+</div>
+
+<!-- Offline indicator pill -->
+<div id="offline-pill" role="status">
+    📵 Mode Offline
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   PWA — Service Worker Registration & Logic
+   ═══════════════════════════════════════════ */
+(function() {
+    'use strict';
+
+    let deferredPrompt = null;
+    let newWorker = null;
+
+    /* ── Register Service Worker ── */
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js', { scope: './' })
+                .then(reg => {
+                    console.log('[PWA] Service Worker terdaftar:', reg.scope);
+
+                    /* Cek update setiap 30 menit */
+                    setInterval(() => reg.update(), 30 * 60 * 1000);
+
+                    /* Deteksi update tersedia */
+                    reg.addEventListener('updatefound', () => {
+                        newWorker = reg.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                showUpdateBanner();
+                            }
+                        });
+                    });
+                })
+                .catch(err => console.warn('[PWA] Registrasi gagal:', err));
+
+            /* Reload otomatis setelah SW baru aktif */
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (window._pwaRefreshing) return;
+                window._pwaRefreshing = true;
+                window.location.reload();
+            });
+        });
+    }
+
+    /* ── Install Prompt ── */
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+        /* Jangan tampilkan jika sudah dismiss sebelumnya (< 7 hari) */
+        const dismissed = localStorage.getItem('pwa-dismiss-ts');
+        if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
+        /* Tunda 3 detik agar tidak mengganggu load awal */
+        setTimeout(showInstallBanner, 3000);
+    });
+
+    window.addEventListener('appinstalled', () => {
+        hideInstallBanner();
+        deferredPrompt = null;
+        toast('✅ LitologiKu Pro berhasil diinstall!', 'success');
+        console.log('[PWA] App installed');
+    });
+
+    /* ── Offline / Online Detection ── */
+    function updateOnlineStatus() {
+        const pill = document.getElementById('offline-pill');
+        if (!pill) return;
+        if (navigator.onLine) {
+            pill.classList.remove('show');
+        } else {
+            pill.classList.add('show');
+            toast('📵 Anda sedang offline — data tetap tersimpan', 'info');
+        }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    /* Cek status awal setelah DOM siap */
+    window.addEventListener('DOMContentLoaded', updateOnlineStatus);
+
+    /* ── Banner helpers (exposed globally) ── */
+    function showInstallBanner() {
+        const b = document.getElementById('pwa-install-banner');
+        if (b) b.classList.add('show');
+    }
+    function hideInstallBanner() {
+        const b = document.getElementById('pwa-install-banner');
+        if (b) b.classList.remove('show');
+    }
+    function showUpdateBanner() {
+        const b = document.getElementById('pwa-update-banner');
+        if (b) b.classList.add('show');
+    }
+
+    window.pwaInstall = async function() {
+        if (!deferredPrompt) {
+            toast('Install dari menu browser → "Tambahkan ke Layar Utama"', 'info');
+            hideInstallBanner();
+            return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] User choice:', outcome);
+        deferredPrompt = null;
+        hideInstallBanner();
+    };
+
+    window.pwaDismiss = function() {
+        localStorage.setItem('pwa-dismiss-ts', Date.now().toString());
+        const b = document.getElementById('pwa-install-banner');
+        if (b) b.classList.remove('show');
+    };
+
+    window.pwaUpdate = function() {
+        const b = document.getElementById('pwa-update-banner');
+        if (b) b.classList.remove('show');
+        if (newWorker) {
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+    };
+
+})();
+</script>
+
+</body>
+</html>
