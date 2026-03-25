@@ -14,11 +14,6 @@
 
 **Dikembangkan oleh Teknik Geologi — Universitas Islam Riau**  
 _Alat bantu deskripsi megaskopis batuan beku, sedimen, dan metamorf untuk mahasiswa geologi & geolog lapangan._
-
----
-
-[🚀 Demo Live](#) · [📥 Download](#installation) · [📖 Dokumentasi](#fitur-lengkap) · [🐛 Lapor Bug](../../issues)
-
 </div>
 
 ---
@@ -27,11 +22,6 @@ _Alat bantu deskripsi megaskopis batuan beku, sedimen, dan metamorf untuk mahasi
 
 <div align="center">
 
-| Beranda | Input Batuan Beku | Data & Export |
-|:---:|:---:|:---:|
-| ![Home](docs/screenshot-home.png) | ![Beku](docs/screenshot-beku.png) | ![Data](docs/screenshot-data.png) |
-
-> _Screenshot akan tampil setelah deploy. Buka DevTools → screenshot tiap halaman._
 
 </div>
 
@@ -114,7 +104,7 @@ Panel referensi terintegrasi mencakup:
 
 ---
 
-## 🛠️ Teknologi
+## 🛠️ Penggunaan Coding
 
 ```
 LitologiKu Pro
@@ -331,6 +321,11 @@ dan izin ini disertakan dalam semua salinan atau bagian substansial.
 ```
 
 ---
+
+## Sitasi
+
+Silahkan sitasi kode ini jika diperlukan :
+Choanji, Tiggi (2026). LitologiKu: aplikasi database pemetaan geologi offline untuk pembelajaran lapangan. https://github.com/tiggic/LitologiKu.
 
 ## 👨‍🏫 Tentang Pengembang
 
