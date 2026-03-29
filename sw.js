@@ -4,12 +4,12 @@
    Strategi: Cache-First untuk assets, Network-First untuk data
    ═══════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'litologiku-pro-v1';
-const OFFLINE_URL = './LitologiKu_Pro_6.html';
+const CACHE_NAME = 'litologiku-pro-v3';
+const OFFLINE_URL = './LitologiKu_Pro_9.html';
 
 /* Semua asset yang akan di-cache saat install */
 const PRECACHE_ASSETS = [
-  './LitologiKu_Pro_6.html',
+  './LitologiKu_Pro_9.html',
   './manifest.json',
   /* jsPDF dari CDN — di-cache saat pertama diload */
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
