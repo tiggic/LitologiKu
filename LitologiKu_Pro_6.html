@@ -451,6 +451,76 @@
             margin-top: 0.4rem;
         }
 
+        /* ═══════════ MULTI PHOTO GRID ═══════════ */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+        }
+
+        .photo-thumb {
+            position: relative;
+            border-radius: 7px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: var(--stone-100);
+            border: 1.5px solid var(--stone-200);
+        }
+
+        .photo-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-thumb .photo-remove {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 22px; height: 22px;
+            background: rgba(239,68,68,0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: grid; place-items: center;
+            line-height: 1;
+            transition: background 0.15s;
+        }
+
+        .photo-thumb .photo-remove:hover { background: var(--rose-600); }
+
+        .photo-thumb .photo-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.55);
+            color: white;
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            padding: 2px 5px;
+            text-align: center;
+        }
+
+        .photo-add-slot {
+            border: 2px dashed var(--stone-300);
+            border-radius: 7px;
+            aspect-ratio: 4/3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--stone-400);
+            font-size: 0.75rem;
+            gap: 0.3rem;
+            transition: all 0.2s;
+            background: var(--stone-50);
+        }
+
+        .photo-add-slot:hover { border-color: var(--amber-400); color: var(--amber-600); background: var(--amber-50); }
+        .photo-add-slot .add-icon { font-size: 1.4rem; }
+
         /* ═══════════ RESULT BOX ═══════════ */
         .result-box {
             background: var(--stone-900);
@@ -927,54 +997,22 @@
             color: var(--stone-500);
             margin-top: 0.25rem;
         }
-        /* Style untuk Tabel Data */
-        #data-table th {
-            background-color: #e9ecef;
-            color: #333;
-            user-select: none;
-            position: relative;
-        }
-        #data-table th:hover {
-            background-color: #dde2e6;
-        }
-        #data-table td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        #data-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        #data-table tr:hover {
-            background-color: #f1f1f1;
-        }
-
         /* Sortable headers */
         .sortable {
             cursor: pointer;
+            user-select: none;
         }
 
         /* Indikator Panah Sortir */
         .th-sort-asc::after {
             content: " ▲";
-            font-size: 0.8em;
-            color: #007bff;
+            font-size: 0.75em;
+            color: var(--amber-500);
         }
         .th-sort-desc::after {
             content: " ▼";
-            font-size: 0.8em;
-            color: #007bff;
-        }
-
-        /* Stats Box */
-        .stats-container {
-            font-family: monospace;
-            font-weight: bold;
-        }
-        .stat-box {
-            background: #eee;
-            padding: 5px 10px;
-            border-radius: 4px;
+            font-size: 0.75em;
+            color: var(--amber-500);
         }
     </style>
 </head>
@@ -1080,7 +1118,7 @@
                                 <input type="number" step="0.000001" id="beku_lokasi_lng" placeholder="101.447779">
                             </div>
                         </div>
-                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('beku')" style="font-size:0.8rem;">📡 Ambil GPS Otomatis</button>
+                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('beku', this)" style="font-size:0.8rem;">📡 Ambil GPS Otomatis</button>
                         <div id="beku_coordDisplay" class="coord-display hidden"></div>
                     </div>
 
@@ -1150,18 +1188,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Foto Singkapan</label>
-                        <div class="upload-zone" onclick="document.getElementById('beku_foto').click()"
-                             ondrop="handleDrop(event,'beku')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                        <label>Foto Singkapan <span class="label-hint">(maks. 3 foto, JPG/PNG, tiap foto maks. 5MB)</span></label>
+                        <div class="upload-zone" id="beku_dropzone"
+                             ondrop="handleDrop(event,'beku')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                             onclick="document.getElementById('beku_foto').click()">
                             <div class="icon">📸</div>
-                            <p>Klik atau drag & drop foto (JPG/PNG, max 5MB)</p>
-                            <input type="file" id="beku_foto" accept="image/*" class="hidden" onchange="handleImageUpload(event,'beku')">
+                            <p>Klik atau drag &amp; drop foto (maks. 3)</p>
+                            <input type="file" id="beku_foto" accept="image/*" multiple class="hidden" onchange="handleImageUpload(event,'beku')">
                         </div>
-                        <div id="beku_imagePreviewContainer" class="hidden">
-                            <img id="beku_imagePreview" class="image-preview" alt="Preview">
-                            <div class="image-info" id="beku_imageInfo"></div>
-                            <button type="button" class="btn btn-danger" onclick="removeImage('beku')" style="margin-top:0.5rem;font-size:0.78rem;">✕ Hapus Foto</button>
-                        </div>
+                        <div id="beku_photoGrid" class="photo-grid" style="display:none;"></div>
                     </div>
 
                     <div class="form-group">
@@ -1379,7 +1414,7 @@
                             <div class="form-group"><label>Lintang (Lattitude)</label><input type="number" step="0.000001" id="sedimen_lokasi_lat" placeholder="0.507068"></div>
                             <div class="form-group"><label>Bujur (Longitude)</label><input type="number" step="0.000001" id="sedimen_lokasi_lng" placeholder="101.447779"></div>
                         </div>
-                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('sedimen')" style="font-size:0.8rem;">📡 Ambil GPS</button>
+                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('sedimen', this)" style="font-size:0.8rem;">📡 Ambil GPS</button>
                         <div id="sedimen_coordDisplay" class="coord-display hidden"></div>
                     </div>
                     <div class="grid grid-3">
@@ -1423,16 +1458,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Foto Singkapan</label>
-                        <div class="upload-zone" onclick="document.getElementById('sedimen_foto').click()" ondrop="handleDrop(event,'sedimen')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                            <div class="icon">📸</div><p>Klik atau drag foto</p>
-                            <input type="file" id="sedimen_foto" accept="image/*" class="hidden" onchange="handleImageUpload(event,'sedimen')">
+                        <label>Foto Singkapan <span class="label-hint">(maks. 3 foto, JPG/PNG, tiap foto maks. 5MB)</span></label>
+                        <div class="upload-zone" id="sedimen_dropzone"
+                             ondrop="handleDrop(event,'sedimen')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                             onclick="document.getElementById('sedimen_foto').click()">
+                            <div class="icon">📸</div><p>Klik atau drag &amp; drop foto (maks. 3)</p>
+                            <input type="file" id="sedimen_foto" accept="image/*" multiple class="hidden" onchange="handleImageUpload(event,'sedimen')">
                         </div>
-                        <div id="sedimen_imagePreviewContainer" class="hidden">
-                            <img id="sedimen_imagePreview" class="image-preview" alt="Preview">
-                            <div class="image-info" id="sedimen_imageInfo"></div>
-                            <button type="button" class="btn btn-danger" onclick="removeImage('sedimen')" style="margin-top:0.5rem;font-size:0.78rem;">✕ Hapus</button>
-                        </div>
+                        <div id="sedimen_photoGrid" class="photo-grid" style="display:none;"></div>
                     </div>
                     <div class="form-group"><label>Catatan Lapangan</label><textarea id="sedimen_lokasi_catatan" placeholder="Catatan lokasi..."></textarea></div>
                 </div>
@@ -1651,7 +1684,7 @@
                             <div class="form-group"><label>Lintang (Lattitude)</label><input type="number" step="0.000001" id="metamorf_lokasi_lat" placeholder="0.507068"></div>
                             <div class="form-group"><label>Bujur (Longitude)</label><input type="number" step="0.000001" id="metamorf_lokasi_lng" placeholder="106.815743"></div>
                         </div>
-                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('metamorf')" style="font-size:0.8rem;">📡 Ambil GPS</button>
+                        <button type="button" class="btn btn-outline" onclick="getCurrentLocation('metamorf', this)" style="font-size:0.8rem;">📡 Ambil GPS</button>
                         <div id="metamorf_coordDisplay" class="coord-display hidden"></div>
                     </div>
                     <div class="grid grid-3">
@@ -1667,16 +1700,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Foto</label>
-                        <div class="upload-zone" onclick="document.getElementById('metamorf_foto').click()" ondrop="handleDrop(event,'metamorf')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                            <div class="icon">📸</div><p>Klik atau drag foto</p>
-                            <input type="file" id="metamorf_foto" accept="image/*" class="hidden" onchange="handleImageUpload(event,'metamorf')">
+                        <label>Foto <span class="label-hint">(maks. 3 foto, JPG/PNG, tiap foto maks. 5MB)</span></label>
+                        <div class="upload-zone" id="metamorf_dropzone"
+                             ondrop="handleDrop(event,'metamorf')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                             onclick="document.getElementById('metamorf_foto').click()">
+                            <div class="icon">📸</div><p>Klik atau drag &amp; drop foto (maks. 3)</p>
+                            <input type="file" id="metamorf_foto" accept="image/*" multiple class="hidden" onchange="handleImageUpload(event,'metamorf')">
                         </div>
-                        <div id="metamorf_imagePreviewContainer" class="hidden">
-                            <img id="metamorf_imagePreview" class="image-preview" alt="Preview">
-                            <div class="image-info" id="metamorf_imageInfo"></div>
-                            <button type="button" class="btn btn-danger" onclick="removeImage('metamorf')" style="margin-top:0.5rem;font-size:0.78rem;">✕ Hapus</button>
-                        </div>
+                        <div id="metamorf_photoGrid" class="photo-grid" style="display:none;"></div>
                     </div>
                     <div class="form-group"><label>Catatan Lapangan</label><textarea id="metamorf_lokasi_catatan"></textarea></div>
                 </div>
@@ -1921,6 +1952,21 @@
     </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal" style="z-index:1100;">
+    <div class="modal-content" style="max-width:720px;max-height:90vh;overflow-y:auto;">
+        <div class="modal-header" style="position:sticky;top:0;background:white;z-index:10;border-bottom:2px solid var(--stone-200);padding-bottom:0.75rem;">
+            <h2 style="font-size:1.1rem;">✏️ Edit Data — <span id="editModalTitle"></span></h2>
+            <button class="close-btn" onclick="closeEditModal()">×</button>
+        </div>
+        <div id="editModalBody" style="padding:1rem 0;"></div>
+        <div style="display:flex;gap:0.5rem;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--stone-200);position:sticky;bottom:0;background:white;">
+            <button class="btn btn-outline" onclick="closeEditModal()">Batal</button>
+            <button class="btn btn-accent" onclick="saveEdit()">💾 Simpan Perubahan</button>
+        </div>
+    </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════
    INDEXEDDB
@@ -1928,7 +1974,7 @@
 const DB_NAME = 'LitologiKuDB';
 const DB_VERSION = 2;
 let db;
-const currentImages = { beku: null, sedimen: null, metamorf: null };
+const currentImages = { beku: [], sedimen: [], metamorf: [] };
 // Variabel Global untuk State Sorting
 let currentSort = { column: 'tanggal', order: 'desc' }; // Default sort by tanggal terbaru
 let allData = []; // Pastikan ini diisi saat load dari IndexedDB
@@ -1974,6 +2020,15 @@ function deleteData(id) {
     });
 }
 
+function updateInDB(data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(['rocks'], 'readwrite');
+        const req = tx.objectStore('rocks').put(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
 function clearDB() {
     return new Promise((resolve, reject) => {
         const req = db.transaction(['rocks'], 'readwrite').objectStore('rocks').clear();
@@ -1997,23 +2052,42 @@ function toast(msg, type = 'info') {
 /* ═══════════════════════════════════════════
    IMAGE HANDLING
    ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   IMAGE HANDLING — Multi Photo (max 3)
+   ═══════════════════════════════════════════ */
+const MAX_PHOTOS = 3;
+
 function handleImageUpload(e, type) {
-    const f = e.target.files[0];
-    if (f) processImage(f, type);
+    const files = Array.from(e.target.files);
+    processFiles(files, type);
+    // Reset input agar file yang sama bisa dipilih lagi
+    e.target.value = '';
 }
 
 function handleDrop(e, type) {
     e.preventDefault();
     e.currentTarget.classList.remove('dragover');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('image/')) processImage(f, type);
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    processFiles(files, type);
 }
 
 function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
 function handleDragLeave(e) { e.currentTarget.classList.remove('dragover'); }
 
+function processFiles(files, type) {
+    const remaining = MAX_PHOTOS - currentImages[type].length;
+    if (remaining <= 0) { toast(`Maksimal ${MAX_PHOTOS} foto sudah tercapai`, 'error'); return; }
+    const toProcess = files.slice(0, remaining);
+    if (files.length > remaining) {
+        toast(`Hanya ${remaining} foto lagi yang bisa ditambahkan (maks. ${MAX_PHOTOS})`, 'info');
+    }
+    toProcess.forEach(file => {
+        if (file.size > 5 * 1024 * 1024) { toast(`${file.name}: terlalu besar (maks. 5MB)`, 'error'); return; }
+        processImage(file, type);
+    });
+}
+
 function processImage(file, type) {
-    if (file.size > 5 * 1024 * 1024) { toast('File terlalu besar (max 5MB)', 'error'); return; }
     const reader = new FileReader();
     reader.onload = (e) => {
         const img = new Image();
@@ -2026,30 +2100,75 @@ function processImage(file, type) {
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             const data = canvas.toDataURL('image/jpeg', 0.75);
-            currentImages[type] = data;
-            document.getElementById(`${type}_imagePreview`).src = data;
-            document.getElementById(`${type}_imagePreviewContainer`).classList.remove('hidden');
-            document.getElementById(`${type}_imageInfo`).textContent = `${Math.round(data.length / 1024)}KB | ${w}×${h}px`;
+            currentImages[type].push(data);
+            renderPhotoGrid(type);
         };
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }
 
+function renderPhotoGrid(type) {
+    const photos = currentImages[type];
+    const grid = document.getElementById(`${type}_photoGrid`);
+    const zone = document.getElementById(`${type}_dropzone`);
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    grid.style.display = photos.length ? 'grid' : 'none';
+
+    photos.forEach((src, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'photo-thumb';
+        thumb.innerHTML = `
+            <img src="${src}" alt="Foto ${idx + 1}">
+            <button type="button" class="photo-remove" onclick="removePhoto('${type}',${idx})" title="Hapus foto">✕</button>
+            <div class="photo-label">Foto ${idx + 1} · ${Math.round(src.length / 1024)}KB</div>
+        `;
+        grid.appendChild(thumb);
+    });
+
+    // Tambah slot "+" jika masih bisa tambah
+    if (photos.length < MAX_PHOTOS) {
+        const slot = document.createElement('div');
+        slot.className = 'photo-add-slot';
+        slot.title = 'Tambah foto';
+        slot.innerHTML = `<span class="add-icon">➕</span><span>Tambah</span>`;
+        slot.onclick = () => document.getElementById(`${type}_foto`).click();
+        grid.appendChild(slot);
+    }
+
+    // Update upload zone text
+    if (zone) {
+        const p = zone.querySelector('p');
+        if (p) {
+            if (photos.length >= MAX_PHOTOS) {
+                p.textContent = `${MAX_PHOTOS}/${MAX_PHOTOS} foto — batas tercapai`;
+            } else {
+                p.textContent = `${photos.length}/${MAX_PHOTOS} foto — klik atau drag untuk tambah`;
+            }
+        }
+    }
+}
+
+function removePhoto(type, idx) {
+    currentImages[type].splice(idx, 1);
+    renderPhotoGrid(type);
+}
+
 function removeImage(type) {
-    currentImages[type] = null;
+    currentImages[type] = [];
+    renderPhotoGrid(type);
     document.getElementById(`${type}_foto`).value = '';
-    document.getElementById(`${type}_imagePreviewContainer`).classList.add('hidden');
 }
 
 /* ═══════════════════════════════════════════
    GPS
    ═══════════════════════════════════════════ */
-function getCurrentLocation(type) {
+function getCurrentLocation(type, btn) {
     if (!navigator.geolocation) { toast('GPS tidak didukung browser', 'error'); return; }
-    const btn = event.target;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Mengambil...';
+    if (!btn) btn = event?.target; // fallback
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Mengambil...'; }
     navigator.geolocation.getCurrentPosition(
         (pos) => {
             document.getElementById(`${type}_lokasi_lat`).value = pos.coords.latitude.toFixed(6);
@@ -2057,10 +2176,10 @@ function getCurrentLocation(type) {
             const cd = document.getElementById(`${type}_coordDisplay`);
             cd.textContent = `📍 ${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)} (±${Math.round(pos.coords.accuracy)}m)`;
             cd.classList.remove('hidden');
-            btn.disabled = false; btn.innerHTML = '📡 Ambil GPS';
+            if (btn) { btn.disabled = false; btn.innerHTML = '📡 Ambil GPS'; }
             toast('Koordinat berhasil diambil', 'success');
         },
-        (err) => { toast('Gagal GPS: ' + err.message, 'error'); btn.disabled = false; btn.innerHTML = '📡 Ambil GPS'; },
+        (err) => { toast('Gagal GPS: ' + err.message, 'error'); if (btn) { btn.disabled = false; btn.innerHTML = '📡 Ambil GPS'; } },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
 }
@@ -2143,7 +2262,7 @@ function suggestRockName() {
 
     let name = '';
     let basis = '';
-    const isPhaneritic = gran && gran.includes('Fanerik');
+    const isPhaneritic = gran && gran.includes('Faneritik');
     const prefix = isPhaneritic ? '' : '(Vulkanik) ';
 
     if (F > 0 && Q > 0) {
@@ -2213,7 +2332,7 @@ function getLoc(type) {
         pelapukan: document.getElementById(`${type}_lokasi_pelapukan`)?.value || '',
         kekerasan: document.getElementById(`${type}_lokasi_kekerasan`)?.value || '',
         catatan: document.getElementById(`${type}_lokasi_catatan`)?.value || '',
-        foto: currentImages[type]
+        foto: [...currentImages[type]]  // simpan array foto (0-3 item)
     };
 }
 
@@ -2450,7 +2569,7 @@ async function saveData(type) {
         window.tempData.id = Date.now();
         await saveToDB(window.tempData);
         toast('Data berhasil disimpan!', 'success');
-        resetForm(type);
+        resetForm(type, true);
         window.tempData = null;
         // Refresh data list if currently viewing data section
         if (document.getElementById('data').classList.contains('active')) {
@@ -2500,9 +2619,10 @@ async function loadDataList() {
                 <td>${i.location?.nama || '-'}</td>
                 <td><span class="badge badge-${i.type}">${i.type.toUpperCase()}</span></td>
                 <td style="font-family:var(--font-mono);font-size:0.78rem;">${i.location?.latitude ? `${i.location.latitude.toFixed(4)}, ${i.location.longitude.toFixed(4)}` : '-'}</td>
-                <td>${i.location?.foto ? '✅' : '—'}</td>
+                <td>${(() => { const f = i.location?.foto; const n = Array.isArray(f) ? f.length : (f ? 1 : 0); return n ? `📷 ${n}` : '—'; })()}</td>
                 <td>
                     <button class="btn btn-outline" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="viewData(${i.id})">Lihat</button>
+                    <button class="btn btn-accent" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="editData(${i.id})">✏️ Edit</button>
                     <button class="btn btn-danger" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="deleteItem(${i.id})">Hapus</button>
                 </td>
             </tr>`;
@@ -2524,7 +2644,14 @@ async function viewData(id) {
     else if (item.type === 'sedimen') content = formatSedimen(item);
     else if (item.type === 'metamorf') content = formatMetamorf(item);
     let html = `<pre style="white-space:pre-wrap;font-family:var(--font-mono);font-size:0.82rem;line-height:1.7;">${content}</pre>`;
-    if (item.location?.foto) html += `<img src="${item.location.foto}" style="max-width:100%;margin-top:1rem;border-radius:8px;">`;
+    const fotos = Array.isArray(item.location?.foto) ? item.location.foto : (item.location?.foto ? [item.location.foto] : []);
+    if (fotos.length) {
+        html += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.6rem;margin-top:1rem;">`;
+        fotos.forEach((src, i) => {
+            html += `<div><img src="${src}" style="width:100%;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);" alt="Foto ${i+1}"><p style="text-align:center;font-size:0.7rem;color:var(--stone-400);margin-top:0.3rem;">Foto ${i+1}</p></div>`;
+        });
+        html += `</div>`;
+    }
     document.getElementById('modalBody').innerHTML = html;
     document.getElementById('viewModal').classList.add('active');
 }
@@ -2536,12 +2663,405 @@ async function deleteItem(id) {
     toast('Data dihapus', 'info');
 }
 
+/* ═══════════════════════════════════════════
+   EDIT DATA
+   ═══════════════════════════════════════════ */
+let editingItem = null;
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+    editingItem = null;
+}
+
+window.onclick = (e) => {
+    if (e.target === document.getElementById('viewModal')) closeModal();
+    if (e.target === document.getElementById('editModal')) closeEditModal();
+};
+
+async function editData(id) {
+    const data = await getAllData();
+    const item = data.find(d => d.id === id);
+    if (!item) return;
+    editingItem = JSON.parse(JSON.stringify(item)); // deep copy
+
+    const typeLabel = { beku: '🔥 Batuan Beku', sedimen: '📚 Batuan Sedimen', metamorf: '💎 Batuan Metamorf' };
+    document.getElementById('editModalTitle').textContent = typeLabel[item.type] || item.type;
+
+    let html = '';
+    const L = item.location || {};
+
+    // ── LOKASI (semua tipe) ──
+    html += `<div class="field-section">
+        <h3>📍 Informasi Lokasi</h3>
+        <div class="grid grid-2">
+            <div class="form-group"><label>Nama Lokasi / Station</label><input type="text" id="ed_lokasi_nama" value="${esc_(L.nama)}"></div>
+            <div class="form-group"><label>Tanggal</label><input type="date" id="ed_lokasi_tanggal" value="${esc_(L.tanggal)}"></div>
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group"><label>Lintang (Latitude)</label><input type="number" step="0.000001" id="ed_lokasi_lat" value="${L.latitude || ''}"></div>
+            <div class="form-group"><label>Bujur (Longitude)</label><input type="number" step="0.000001" id="ed_lokasi_lng" value="${L.longitude || ''}"></div>
+        </div>
+        <div class="grid grid-3">
+            <div class="form-group"><label>Cuaca</label>
+                <select id="ed_lokasi_cuaca">${editSelectOpts(['','Cerah','Cerah Berawan','Berawan','Mendung','Hujan Ringan','Hujan Sedang','Hujan Lebat'], L.cuaca)}</select>
+            </div>
+            <div class="form-group"><label>Elevasi (mdpl)</label><input type="number" id="ed_lokasi_elevasi" value="${L.elevasi || ''}"></div>
+            <div class="form-group"><label>Metode Traverse</label>
+                <select id="ed_lokasi_traverse">${editSelectOpts(['','Sungai','Jalan','Bukit/Lereng','Pantai','Tambang/Galian'], L.traverse)}</select>
+            </div>
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group"><label>Dimensi Singkapan</label><input type="text" id="ed_lokasi_dimensi" value="${esc_(L.dimensi)}"></div>
+            <div class="form-group"><label>Derajat Pelapukan</label>
+                <select id="ed_lokasi_pelapukan">${editSelectOpts(['','Fresh (I)','Slightly Weathered (II)','Moderately Weathered (III)','Highly Weathered (IV)','Completely Weathered (V)','Residual Soil (VI)'], L.pelapukan)}</select>
+            </div>
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group"><label>Kekerasan</label>
+                <select id="ed_lokasi_kekerasan">${editSelectOpts(['','Sangat Lunak (dapat digores kuku)','Lunak (digores pisau mudah)','Sedang (digores pisau sulit)','Keras (tidak dapat digores pisau)','Sangat Keras (sulit dipecah palu)'], L.kekerasan)}</select>
+            </div>
+            ${item.type === 'sedimen' || item.type === 'metamorf' ? `
+            <div class="form-group"><label>Strike / Dip</label>
+                <div class="grid grid-2" style="gap:0.4rem;">
+                    <input type="number" id="ed_lokasi_strike" placeholder="Strike°" value="${L.strike || ''}">
+                    <input type="number" id="ed_lokasi_dip" placeholder="Dip°" value="${L.dip || ''}">
+                </div>
+            </div>` : ''}
+        </div>
+        <div class="form-group"><label>Catatan Lapangan</label><textarea id="ed_lokasi_catatan">${esc_(L.catatan)}</textarea></div>
+        <div class="form-group">
+            <label>Foto Singkapan <span class="label-hint">(maks. 3 foto)</span></label>
+            <div id="ed_photoGrid" class="photo-grid" style="${(Array.isArray(L.foto) ? L.foto.filter(Boolean) : (L.foto ? [L.foto] : [])).length ? '' : 'display:none;'}">
+            </div>
+            ${(Array.isArray(L.foto) ? L.foto.filter(Boolean) : (L.foto ? [L.foto] : [])).length < 3 ? `
+            <div class="upload-zone" style="margin-top:0.5rem;" ondrop="handleDropEdit(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('ed_foto_input').click()">
+                <div class="icon" style="font-size:1.4rem;">📸</div>
+                <p>Tambah foto</p>
+                <input type="file" id="ed_foto_input" accept="image/*" multiple class="hidden" onchange="handleEditFotoUpload(event)">
+            </div>` : ''}
+        </div>
+    </div>`;
+
+    // ── WARNA ──
+    const warnaOpts = ['','Putih','Abu-abu Terang','Abu-abu','Abu-abu Gelap','Hitam','Merah Muda','Merah','Coklat','Hijau','Hijau Gelap'];
+    const warnaLapukOpts = ['','Putih','Abu-abu','Coklat Muda','Coklat','Coklat Kemerahan','Kuning','Kuning Kecoklatan','Merah'];
+    html += `<div class="field-section">
+        <h3>🎨 Warna</h3>
+        <div class="grid grid-2">
+            <div class="form-group"><label>Warna Segar</label><select id="ed_warna_segar">${editSelectOpts(warnaOpts, item.warna_segar)}</select></div>
+            <div class="form-group"><label>Warna Lapuk</label><select id="ed_warna_lapuk">${editSelectOpts(warnaLapukOpts, item.warna_lapuk)}</select></div>
+        </div>
+    </div>`;
+
+    // ── BATUAN BEKU ──
+    if (item.type === 'beku') {
+        const strukturBeku = ['Masif','Vesikuler','Amigdaloidal','Kekar Kolom','Pillow Lava','Scoriaceous','Pumiceous','Flow Banding'];
+        html += `<div class="field-section">
+            <h3>🏗️ Struktur</h3>
+            <div class="chip-group">${strukturBeku.map(s => `<label class="chip"><input type="checkbox" name="ed_beku_struktur" value="${s}" ${(item.struktur||[]).includes(s)?'checked':''}>${s}</label>`).join('')}</div>
+        </div>
+        <div class="field-section">
+            <h3>🔬 Tekstur</h3>
+            <div class="grid grid-2">
+                <div class="form-group"><label>Kristalisasi</label><select id="ed_beku_kristalisasi">${editSelectOpts(['','Holokristalin','Hipokristalin','Holohyalin'], item.kristalisasi)}</select></div>
+                <div class="form-group"><label>Granularitas</label><select id="ed_beku_granularitas">${editSelectOpts(['','Faneritik Halus (<1mm)','Faneritik Sedang (1-5mm)','Faneritik Kasar (>5mm)','Afanitik','Porfiritik','Glomeroporfir'], item.granularitas)}</select></div>
+                <div class="form-group"><label>Relasi Kristal</label><select id="ed_beku_relasi_kristal">${editSelectOpts(['','Equigranular','Inequigranular','Seriate','Porfiroafanitik'], item.relasi_kristal)}</select></div>
+                <div class="form-group"><label>Bentuk Kristal</label><select id="ed_beku_bentuk_kristal">${editSelectOpts(['','Euhedral','Subhedral','Anhedral','Xenomorfik'], item.bentuk_kristal)}</select></div>
+            </div>
+            <div class="form-group"><label>Tekstur Khusus</label>
+                <div class="chip-group">${['Intergranular','Ophitic','Subophitic','Graphic','Myrmekitik','Poikilitic','Trachytic','Fluidal','Vitrofirik','Sferulit'].map(s=>`<label class="chip"><input type="checkbox" name="ed_beku_tekstur_khusus" value="${s}" ${(item.tekstur_khusus||[]).includes(s)?'checked':''}>${s}</label>`).join('')}</div>
+            </div>
+        </div>
+        <div class="field-section">
+            <h3>⚗️ Komposisi Mineral (QAPF %)</h3>
+            <div class="grid grid-4">
+                <div class="form-group"><label>Q (Kuarsa)</label><input type="number" id="ed_beku_q" min="0" max="100" value="${item.q||''}"></div>
+                <div class="form-group"><label>A (Alkali Fsp)</label><input type="number" id="ed_beku_a" min="0" max="100" value="${item.a||''}"></div>
+                <div class="form-group"><label>P (Plagioklas)</label><input type="number" id="ed_beku_p" min="0" max="100" value="${item.p||''}"></div>
+                <div class="form-group"><label>F (Foid)</label><input type="number" id="ed_beku_f" min="0" max="100" value="${item.f||''}"></div>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group"><label>M (Colour Index %)</label><input type="number" id="ed_beku_m" min="0" max="100" value="${item.m||''}"></div>
+                <div class="form-group"><label>Kelas Warna</label><select id="ed_beku_color_class">${editSelectOpts(['','Leucocratic (M<35)','Mesocratic (35-65)','Melanocratic (65-90)','Ultramafic (M>90)'], item.color_class)}</select></div>
+            </div>
+            <div class="form-group"><label>Mineral Teridentifikasi</label>
+                <div class="chip-group">${['Kuarsa','K-Feldspar','Plagioklas','Muskovit','Biotit','Hornblende','Augit','Olivin','Piroksen','Magnetit','Ilmenit','Apatit','Zirkon','Kalsit','Dolomit','Serpentin','Klorit','Epidot','Garnet','Turmalin'].map(m=>`<label class="chip"><input type="checkbox" name="ed_beku_mineral" value="${m}" ${(item.mineral||[]).includes(m)?'checked':''}>${m}</label>`).join('')}</div>
+            </div>
+        </div>
+        <div class="field-section">
+            <h3>🏷️ Nama Batuan</h3>
+            <div class="form-group"><input type="text" id="ed_beku_rock_name" value="${esc_(item.rock_name)}" placeholder="Nama batuan (IUGS/QAPF)"></div>
+        </div>
+        <div class="field-section">
+            <h3>📝 Catatan Batuan</h3>
+            <div class="form-group"><textarea id="ed_beku_catatan">${esc_(item.catatan)}</textarea></div>
+        </div>`;
+    }
+
+    // ── BATUAN SEDIMEN ──
+    if (item.type === 'sedimen') {
+        const jenisOpts = ['','Klastik','Karbonat','Vulkaniklastik','Evaporit','Organik/Biokimia'];
+        html += `<div class="field-section">
+            <h3>📋 Jenis Batuan Sedimen</h3>
+            <div class="form-group"><select id="ed_sedimen_jenis">${editSelectOpts(jenisOpts, item.jenis)}</select></div>
+        </div>
+        <div class="field-section">
+            <h3>🏗️ Struktur Sedimen</h3>
+            <div class="chip-group">${['Masif','Perlapisan Sejajar','Cross Bedding','Graded Bedding','Laminasi','Ripple Marks','Flute Cast','Load Cast','Bioturbasi','Konvolut'].map(s=>`<label class="chip"><input type="checkbox" name="ed_sedimen_struktur" value="${s}" ${(item.struktur||[]).includes(s)?'checked':''}>${s}</label>`).join('')}</div>
+            <div class="form-group" style="margin-top:0.75rem;"><label>Ketebalan Lapisan</label><select id="ed_sedimen_bedding">${editSelectOpts(['','Laminasi (<1cm)','Sangat Tipis (1-3cm)','Tipis (3-10cm)','Sedang (10-30cm)','Tebal (30-100cm)','Sangat Tebal (>100cm)'], item.bedding)}</select></div>
+        </div>
+        <div class="field-section">
+            <h3>🔬 Tekstur Klastik (Wentworth)</h3>
+            <div class="grid grid-2">
+                <div class="form-group"><label>Ukuran Butir</label><select id="ed_sedimen_ukuran">${editSelectOpts(['','Bongkah (>256mm)','Berangkal (64-256mm)','Kerikil Kasar (32-64mm)','Kerikil Sedang (16-32mm)','Kerikil Halus (4-16mm)','Pasir Sangat Kasar (1-2mm)','Pasir Kasar (0.5-1mm)','Pasir Sedang (0.25-0.5mm)','Pasir Halus (0.125-0.25mm)','Pasir Sangat Halus (0.0625-0.125mm)','Lanau (0.004-0.0625mm)','Lempung (<0.004mm)'], item.ukuran)}</select></div>
+                <div class="form-group"><label>Pemilahan</label><select id="ed_sedimen_sorting">${editSelectOpts(['','Sangat Baik','Baik','Sedang','Buruk','Sangat Buruk'], item.sorting)}</select></div>
+                <div class="form-group"><label>Kebundaran</label><select id="ed_sedimen_roundness">${editSelectOpts(['','Angular','Subangular','Subrounded','Rounded','Well Rounded'], item.roundness)}</select></div>
+                <div class="form-group"><label>Sphericity</label><select id="ed_sedimen_sphericity">${editSelectOpts(['','Low Sphericity','High Sphericity'], item.sphericity)}</select></div>
+                <div class="form-group"><label>Kemas</label><select id="ed_sedimen_fabric">${editSelectOpts(['','Terbuka (Open)','Tertutup (Closed)'], item.fabric)}</select></div>
+                <div class="form-group"><label>Kematangan</label><select id="ed_sedimen_maturity">${editSelectOpts(['','Immature','Submature','Mature','Supermature'], item.maturity)}</select></div>
+            </div>
+            <div class="form-group"><label>Semen/Matriks</label>
+                <div class="chip-group">${['Silika','Karbonatan','Oksida Besi (Hematit)','Limonit','Lempung','Dolomit','Gipsum','Pirit'].map(s=>`<label class="chip"><input type="checkbox" name="ed_sedimen_semen" value="${s}" ${(item.semen||[]).includes(s)?'checked':''}>${s}</label>`).join('')}</div>
+            </div>
+        </div>
+        <div class="field-section">
+            <h3>🪨 Klasifikasi Karbonat</h3>
+            <div class="grid grid-2">
+                <div class="form-group"><label>Dunham (1962)</label><select id="ed_sedimen_dunham">${editSelectOpts(['','Mudstone','Wackestone','Packstone','Grainstone','Boundstone','Crystalline'], item.dunham)}</select></div>
+                <div class="form-group"><label>Folk (1959)</label><select id="ed_sedimen_folk">${editSelectOpts(['','Intrasparit','Intramikrit','Oosparit','Oomikrit','Biosparit','Biomikrit','Pelsparit','Pelmikrit'], item.folk)}</select></div>
+            </div>
+        </div>
+        <div class="field-section">
+            <h3>🌋 Vulkaniklastik (Schmid)</h3>
+            <div class="form-group"><label>Ukuran Fragmen</label><select id="ed_sedimen_pyro_size">${editSelectOpts(['','Blok/Bom (>64mm)','Lapilli (2-64mm)','Abu Kasar (0.5-2mm)','Abu Halus (<0.5mm)'], item.pyro_size)}</select></div>
+        </div>
+        <div class="field-section">
+            <h3>🧪 Reaksi HCl</h3>
+            <div class="chip-group">
+                ${['Tidak Bereaksi','Bereaksi Lemah','Bereaksi Sedang','Bereaksi Kuat'].map(s=>`<label class="chip"><input type="radio" name="ed_sedimen_hcl" value="${s}" ${item.hcl===s?'checked':''}>${s}</label>`).join('')}
+            </div>
+        </div>
+        <div class="field-section">
+            <h3>📝 Komposisi & Catatan</h3>
+            <div class="form-group"><label>Komposisi</label><textarea id="ed_sedimen_komposisi">${esc_(item.komposisi)}</textarea></div>
+            <div class="form-group"><label>Catatan Batuan</label><textarea id="ed_sedimen_catatan">${esc_(item.catatan)}</textarea></div>
+        </div>`;
+    }
+
+    // ── BATUAN METAMORF ──
+    if (item.type === 'metamorf') {
+        html += `<div class="field-section">
+            <h3>🏗️ Struktur</h3>
+            <div class="form-group"><select id="ed_metamorf_struktur">${editSelectOpts(['','Foliasi','Non-Foliasi'], item.struktur)}</select></div>
+            <div class="form-group" style="margin-top:0.5rem;"><label>Foliasi</label>
+                <div class="chip-group">${['Slate cleavage','Phyllitic','Schistosity','Gneissic'].map(s=>`<label class="chip"><input type="radio" name="ed_metamorf_foliasi" value="${s}" ${item.foliasi===s?'checked':''}>${s}</label>`).join('')}</div>
+            </div>
+            <div class="form-group"><label>Non-Foliasi</label>
+                <div class="chip-group">${['Hornfels','Granofels','Marble','Quartzite','Skarn','Mylonite','Cataclasite'].map(s=>`<label class="chip"><input type="radio" name="ed_metamorf_nonfoliasi" value="${s}" ${item.nonfoliasi===s?'checked':''}>${s}</label>`).join('')}</div>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group"><label>Strike</label><input type="number" id="ed_metamorf_strike" value="${item.strike||''}"></div>
+                <div class="form-group"><label>Dip</label><input type="number" id="ed_metamorf_dip" value="${item.dip||''}"></div>
+            </div>
+        </div>
+        <div class="field-section">
+            <h3>🔬 Tekstur</h3>
+            <div class="chip-group">${['Lepidoblastik','Nematoblastik','Granoblastik','Porphyroblastik','Poikiloblastik','Decussate','Diablastik','Coronitic','Mylonitic','Cataclastic'].map(s=>`<label class="chip"><input type="checkbox" name="ed_metamorf_tekstur" value="${s}" ${(item.tekstur||[]).includes(s)?'checked':''}>${s}</label>`).join('')}</div>
+        </div>
+        <div class="field-section">
+            <h3>⚗️ Mineral</h3>
+            <div class="chip-group">${['Kuarsa','Feldspar','Mika (Muskovit)','Mika (Biotit)','Klorit','Garnet','Staurolit','Kianit','Silimanit','Andalusit','Hornblende','Tremolit','Aktinolit','Epidot','Zoisit','Kalsit','Dolomit','Serpentin','Talk','Grafik'].map(m=>`<label class="chip"><input type="checkbox" name="ed_metamorf_mineral" value="${m}" ${(item.mineral||[]).includes(m)?'checked':''}>${m}</label>`).join('')}</div>
+        </div>
+        <div class="field-section">
+            <h3>🌡️ Metamorfisme</h3>
+            <div class="grid grid-2">
+                <div class="form-group"><label>Derajat</label><select id="ed_metamorf_derajat">${editSelectOpts(['','Sangat Rendah (Very Low Grade)','Rendah (Low Grade)','Sedang (Medium Grade)','Tinggi (High Grade)','Ultra-High Grade'], item.derajat)}</select></div>
+                <div class="form-group"><label>Tipe</label><select id="ed_metamorf_tipe">${editSelectOpts(['','Kontak (Thermal)','Regional (Barrovian)','Dinamik/Kataklastik','Burial','Baric Low-P (Buchan)','Baric High-P (Franciscan)','Retrogressive'], item.tipe)}</select></div>
+            </div>
+            <div class="form-group"><label>Protolith</label><input type="text" id="ed_metamorf_protolith" value="${esc_(item.protolith)}" placeholder="Batuan asal..."></div>
+        </div>
+        <div class="field-section">
+            <h3>📝 Catatan Batuan</h3>
+            <div class="form-group"><textarea id="ed_metamorf_catatan">${esc_(item.catatan)}</textarea></div>
+        </div>`;
+    }
+
+    document.getElementById('editModalBody').innerHTML = html;
+    // Render foto yang sudah ada di edit modal
+    const existingFotos = Array.isArray(L.foto) ? L.foto.filter(Boolean) : (L.foto ? [L.foto] : []);
+    renderEditPhotoGrid(existingFotos);
+    document.getElementById('editModal').classList.add('active');
+}
+
+function esc_(str) { return (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Edit Modal: Foto Helpers ── */
+function renderEditPhotoGrid(fotos) {
+    const grid = document.getElementById('ed_photoGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    grid.style.display = fotos.length ? 'grid' : 'none';
+    fotos.forEach((src, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'photo-thumb';
+        thumb.innerHTML = `
+            <img src="${src}" alt="Foto ${idx+1}">
+            <button type="button" class="photo-remove" onclick="removeEditPhoto(${idx})" title="Hapus foto">✕</button>
+            <div class="photo-label">Foto ${idx+1} · ${Math.round(src.length/1024)}KB</div>
+        `;
+        grid.appendChild(thumb);
+    });
+    // Update upload zone visibility
+    const uploadZone = document.querySelector('#editModalBody .upload-zone');
+    if (uploadZone) uploadZone.style.display = fotos.length >= MAX_PHOTOS ? 'none' : '';
+}
+
+function removeEditPhoto(idx) {
+    if (!editingItem) return;
+    const fotos = Array.isArray(editingItem.location?.foto) ? [...editingItem.location.foto] : (editingItem.location?.foto ? [editingItem.location.foto] : []);
+    fotos.splice(idx, 1);
+    editingItem.location.foto = fotos;
+    renderEditPhotoGrid(fotos);
+}
+
+function handleEditFotoUpload(e) {
+    const files = Array.from(e.target.files);
+    const current = Array.isArray(editingItem?.location?.foto) ? editingItem.location.foto.filter(Boolean) : (editingItem?.location?.foto ? [editingItem.location.foto] : []);
+    const remaining = MAX_PHOTOS - current.length;
+    if (remaining <= 0) { toast(`Maksimal ${MAX_PHOTOS} foto`, 'error'); return; }
+    files.slice(0, remaining).forEach(file => {
+        if (file.size > 5 * 1024 * 1024) { toast(`${file.name}: terlalu besar (maks. 5MB)`, 'error'); return; }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                const max = 1024;
+                if (w > h) { if (w > max) { h = (h*max)/w; w = max; } } else { if (h > max) { w = (w*max)/h; h = max; } }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const data = canvas.toDataURL('image/jpeg', 0.75);
+                if (!editingItem.location) editingItem.location = {};
+                const arr = Array.isArray(editingItem.location.foto) ? editingItem.location.foto : (editingItem.location.foto ? [editingItem.location.foto] : []);
+                arr.push(data);
+                editingItem.location.foto = arr;
+                renderEditPhotoGrid(arr);
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+    if (e.target?.value !== undefined) e.target.value = '';
+}
+
+function handleDropEdit(e) {
+    e.preventDefault();
+    if (e.currentTarget) e.currentTarget.classList.remove('dragover');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (files.length) handleEditFotoUpload({ target: { files, value: '' } });
+}
+
+function editSelectOpts(opts, current) {
+    return opts.map(o => `<option value="${o}" ${o===current?'selected':''}>${o||'Pilih...'}</option>`).join('');
+}
+
+function getEditChecked(name) { return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(c=>c.value); }
+function getEditRadio(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ''; }
+function getEditVal(id) { return document.getElementById(id)?.value || ''; }
+
+async function saveEdit() {
+    if (!editingItem) return;
+    const item = editingItem;
+
+    // Update lokasi
+    item.location = item.location || {};
+    const L = item.location;
+    L.nama = getEditVal('ed_lokasi_nama');
+    L.tanggal = getEditVal('ed_lokasi_tanggal');
+    L.latitude = parseFloat(getEditVal('ed_lokasi_lat')) || null;
+    L.longitude = parseFloat(getEditVal('ed_lokasi_lng')) || null;
+    L.cuaca = getEditVal('ed_lokasi_cuaca');
+    L.elevasi = getEditVal('ed_lokasi_elevasi');
+    L.traverse = getEditVal('ed_lokasi_traverse');
+    L.dimensi = getEditVal('ed_lokasi_dimensi');
+    L.pelapukan = getEditVal('ed_lokasi_pelapukan');
+    L.kekerasan = getEditVal('ed_lokasi_kekerasan');
+    L.strike = getEditVal('ed_lokasi_strike');
+    L.dip = getEditVal('ed_lokasi_dip');
+    L.catatan = getEditVal('ed_lokasi_catatan');
+
+    // Warna
+    item.warna_segar = getEditVal('ed_warna_segar');
+    item.warna_lapuk = getEditVal('ed_warna_lapuk');
+
+    if (item.type === 'beku') {
+        item.struktur = getEditChecked('ed_beku_struktur');
+        item.kristalisasi = getEditVal('ed_beku_kristalisasi');
+        item.granularitas = getEditVal('ed_beku_granularitas');
+        item.relasi_kristal = getEditVal('ed_beku_relasi_kristal');
+        item.bentuk_kristal = getEditVal('ed_beku_bentuk_kristal');
+        item.tekstur_khusus = getEditChecked('ed_beku_tekstur_khusus');
+        item.q = getEditVal('ed_beku_q');
+        item.a = getEditVal('ed_beku_a');
+        item.p = getEditVal('ed_beku_p');
+        item.f = getEditVal('ed_beku_f');
+        item.m = getEditVal('ed_beku_m');
+        item.color_class = getEditVal('ed_beku_color_class');
+        item.mineral = getEditChecked('ed_beku_mineral');
+        item.rock_name = getEditVal('ed_beku_rock_name');
+        item.catatan = getEditVal('ed_beku_catatan');
+    } else if (item.type === 'sedimen') {
+        item.jenis = getEditVal('ed_sedimen_jenis');
+        item.struktur = getEditChecked('ed_sedimen_struktur');
+        item.bedding = getEditVal('ed_sedimen_bedding');
+        item.ukuran = getEditVal('ed_sedimen_ukuran');
+        item.sorting = getEditVal('ed_sedimen_sorting');
+        item.roundness = getEditVal('ed_sedimen_roundness');
+        item.sphericity = getEditVal('ed_sedimen_sphericity');
+        item.fabric = getEditVal('ed_sedimen_fabric');
+        item.maturity = getEditVal('ed_sedimen_maturity');
+        item.semen = getEditChecked('ed_sedimen_semen');
+        item.dunham = getEditVal('ed_sedimen_dunham');
+        item.folk = getEditVal('ed_sedimen_folk');
+        item.pyro_size = getEditVal('ed_sedimen_pyro_size');
+        item.hcl = getEditRadio('ed_sedimen_hcl');
+        item.komposisi = getEditVal('ed_sedimen_komposisi');
+        item.catatan = getEditVal('ed_sedimen_catatan');
+    } else if (item.type === 'metamorf') {
+        item.struktur = getEditVal('ed_metamorf_struktur');
+        item.foliasi = getEditRadio('ed_metamorf_foliasi');
+        item.nonfoliasi = getEditRadio('ed_metamorf_nonfoliasi');
+        item.strike = getEditVal('ed_metamorf_strike');
+        item.dip = getEditVal('ed_metamorf_dip');
+        item.tekstur = getEditChecked('ed_metamorf_tekstur');
+        item.mineral = getEditChecked('ed_metamorf_mineral');
+        item.derajat = getEditVal('ed_metamorf_derajat');
+        item.tipe = getEditVal('ed_metamorf_tipe');
+        item.protolith = getEditVal('ed_metamorf_protolith');
+        item.catatan = getEditVal('ed_metamorf_catatan');
+    }
+
+    try {
+        await updateInDB(item);
+        toast('✅ Data berhasil diperbarui!', 'success');
+        closeEditModal();
+        loadDataList();
+        updateStats();
+    } catch (e) {
+        toast('Gagal menyimpan: ' + e.message, 'error');
+    }
+}
+
 async function updateStats(data) {
     if (!data) data = await getAllData();
     const b = data.filter(d => d.type === 'beku').length;
     const s = data.filter(d => d.type === 'sedimen').length;
     const m = data.filter(d => d.type === 'metamorf').length;
-    const img = data.filter(d => d.location?.foto).length;
+    const img = data.reduce((sum, d) => {
+        const f = d.location?.foto;
+        return sum + (Array.isArray(f) ? f.length : (f ? 1 : 0));
+    }, 0);
     document.getElementById('statTotal').textContent = data.length;
     document.getElementById('statBeku').textContent = b;
     document.getElementById('statSedimen').textContent = s;
@@ -2552,10 +3072,10 @@ async function updateStats(data) {
     document.getElementById('dbSize').textContent = (sz / 1024 / 1024).toFixed(2) + ' MB';
 }
 
-function resetForm(type) {
-    if (!confirm('Reset semua field?')) return;
+function resetForm(type, silent = false) {
+    if (!silent && !confirm('Reset semua field?')) return;
     document.getElementById('form' + type.charAt(0).toUpperCase() + type.slice(1)).reset();
-    currentImages[type] = null;
+    currentImages[type] = [];
     removeImage(type);
     document.querySelectorAll('.result-box').forEach(b => b.classList.add('hidden'));
     document.getElementById(`${type}_coordDisplay`)?.classList.add('hidden');
@@ -2566,83 +3086,6 @@ function resetForm(type) {
     window.tempData = null;
 }
 
-// Fungsi Utama Render Tabel
-function renderDataTable() {
-    const tbody = document.getElementById('table-body');
-    const searchQuery = document.getElementById('searchData')?.value?.toLowerCase() || '';
-    
-    // Filter berdasarkan pencarian
-    let filteredData = allData.filter(item => {
-        return (item.lokasi && item.lokasi.toLowerCase().includes(searchQuery)) ||
-               (item.catatan && item.catatan.toLowerCase().includes(searchQuery));
-    });
-
-    // Lakukan Sorting
-    filteredData.sort((a, b) => {
-        let valA = a[currentSort.column] || '';
-        let valB = b[currentSort.column] || '';
-
-        // Khusus tanggal, pastikan format YYYY-MM-DD untuk sorting yang benar
-        if (currentSort.column === 'tanggal') {
-            valA = new Date(valA);
-            valB = new Date(valB);
-        } else {
-            valA = valA.toString().toLowerCase();
-            valB = valB.toString().toLowerCase();
-        }
-
-        if (valA < valB) return currentSort.order === 'asc' ? -1 : 1;
-        if (valA > valB) return currentSort.order === 'asc' ? 1 : -1;
-        return 0;
-    });
-
-    // Update Statistik
-    updateStats(filteredData);
-
-    // Render Rows
-    tbody.innerHTML = '';
-    if (filteredData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tidak ada data ditemukan</td></tr>';
-        return;
-    }
-
-    filteredData.forEach((data, index) => {
-        const row = tbody.insertRow();
-        // Tentukan Icon berdasarkan Tipe
-        let typeIcon = '🪨';
-        if(data.tipe === 'Beku') typeIcon = '🔥';
-        if(data.tipe === 'Sedimen') typeIcon = '📚';
-        if(data.tipe === 'Metamorf') typeIcon = '💎';
-
-        row.innerHTML = `
-            <td>${typeIcon} ${data.tipe}</td>
-            <td>${data.tanggal}</td>
-            <td>${data.lokasi || '-'}</td>
-            <td style="font-size:0.8em;">${data.lat || '-'}, ${data.lon || '-'}</td>
-            <td>
-                <button onclick="viewData(${index})" style="font-size:0.8em;">👁️</button>
-                <button onclick="deleteData(${data.id})" style="font-size:0.8em; color:red;">🗑️</button>
-            </td>
-        `;
-    });
-
-    // Update Indikator Panah di Header
-    updateSortIndicators();
-}
-
-// Fungsi Handle Klik Sortir
-function sortTable(column) {
-    if (currentSort.column === column) {
-        // Toggle order jika kolom sama
-        currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
-    } else {
-        // Ganti kolom, default asc
-        currentSort.column = column;
-        currentSort.order = 'asc';
-    }
-    renderDataTable();
-}
-
 function sortDataTable(column) {
     if (currentSort.column === column) {
         currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
@@ -2651,26 +3094,6 @@ function sortDataTable(column) {
         currentSort.order = 'asc';
     }
     loadDataList();
-}
-
-// Update Visual Panah di Header
-function updateSortIndicators() {
-    const headers = document.querySelectorAll('#data-table th');
-    headers.forEach(th => th.classList.remove('th-sort-asc', 'th-sort-desc'));
-    
-    // Cari header yang aktif (berdasarkan onclick attribute text content matching)
-    // Cara sederhana: mapping index atau text
-    const headerMap = {
-        'tipe': 0,
-        'tanggal': 1,
-        'lokasi': 2,
-        'koordinat': 3
-    };
-    
-    const activeIndex = headerMap[currentSort.column];
-    if (activeIndex !== undefined && headers[activeIndex]) {
-        headers[activeIndex].classList.add(currentSort.order === 'asc' ? 'th-sort-asc' : 'th-sort-desc');
-    }
 }
 
 function updateSortIndicatorsForDataList() {
@@ -2689,22 +3112,7 @@ function updateSortIndicatorsForDataList() {
     }
 }
 
-// Update Statistik Box
-/* Duplicate updateStats removed; using main updateStats earlier in the code */
-
-// Event Listener untuk Pencarian
-document.getElementById('searchData')?.addEventListener('input', renderDataTable);
-
-// --- Catatan Integrasi ---
-// Pastikan saat Anda mengambil data dari IndexedDB (fungsi openDB/getAll), 
-// Anda menyimpannya ke variabel 'allData' lalu memanggil renderDataTable().
-// Contoh:
-// getAllDataFromIndexedDB().then(data => {
-//     allData = data;
-//     renderDataTable();
-// });
 function closeModal() { document.getElementById('viewModal').classList.remove('active'); }
-window.onclick = (e) => { if (e.target === document.getElementById('viewModal')) closeModal(); };
 
 /* ═══════════════════════════════════════════
    EXPORT
@@ -2968,23 +3376,33 @@ async function exportPDF() {
             }
 
             /* ── FOTO ── */
-            if (L.foto) {
+            const fotos = Array.isArray(L.foto) ? L.foto.filter(Boolean) : (L.foto ? [L.foto] : []);
+            if (fotos.length) {
                 drawSection('Foto Lapangan');
-                checkPage(50);
-                try {
-                    const props = pdf.getImageProperties(L.foto);
-                    const maxW = Math.min(cw - 4, 70);
-                    const maxH = 50;
-                    let iw = maxW;
-                    let ih = (props.height * iw) / props.width;
-                    if (ih > maxH) { ih = maxH; iw = (props.width * ih) / props.height; }
-                    if (y + ih > ph - 22) { addFooter(); pdf.addPage(); y = 15; }
-                    /* photo border */
-                    setDraw(COL.line); pdf.setLineWidth(0.4);
-                    pdf.rect(mg + 1.5, y - 0.5, iw + 1, ih + 1, 'S');
-                    pdf.addImage(L.foto, 'JPEG', mg + 2, y, iw, ih);
-                    y += ih + 5;
-                } catch(e) {}
+                const maxH = 52;
+                // Render side by side jika 2-3 foto, single jika 1
+                const cols = fotos.length;
+                const colW = Math.min((cw - 4 - (cols - 1) * 3) / cols, 68);
+                checkPage(maxH + 8);
+                let fx = mg + 2;
+                fotos.forEach((foto, fi) => {
+                    try {
+                        const props = pdf.getImageProperties(foto);
+                        let iw = colW;
+                        let ih = (props.height * iw) / props.width;
+                        if (ih > maxH) { ih = maxH; iw = (props.width * ih) / props.height; }
+                        if (y + ih > ph - 22) { addFooter(); pdf.addPage(); y = 15; fx = mg + 2; }
+                        setDraw(COL.line); pdf.setLineWidth(0.4);
+                        pdf.rect(fx - 0.5, y - 0.5, iw + 1, ih + 1, 'S');
+                        pdf.addImage(foto, 'JPEG', fx, y, iw, ih);
+                        // label bawah foto
+                        pdf.setFontSize(6.5); pdf.setFont('helvetica', 'normal');
+                        setCol(COL.footerText);
+                        pdf.text(`Foto ${fi + 1}`, fx + iw / 2, y + ih + 3.5, { align: 'center' });
+                        fx += iw + 3;
+                    } catch(e) {}
+                });
+                y += maxH + 8;
             }
 
             addFooter();
@@ -3065,7 +3483,8 @@ function exportCSV() {
                 i.id, t, i.timestamp || '',
                 L.nama, L.tanggal, L.latitude, L.longitude,
                 L.elevasi, L.cuaca, L.traverse, L.dimensi, L.strike, L.dip,
-                L.pelapukan, L.kekerasan, L.catatan, L.foto ? 'Ya' : 'Tidak',
+                L.pelapukan, L.kekerasan, L.catatan,
+                (() => { const f = L.foto; return Array.isArray(f) ? f.length : (f ? 1 : 0); })() + ' foto',
 
                 // ── WARNA ──
                 i.warna_segar, i.warna_lapuk,
@@ -3124,10 +3543,12 @@ function exportCSV() {
 
         const csv = [headers.map(esc), ...rows].map(r => r.join(',')).join('\n');
         const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        a.href = url;
         a.download = `litologiku_${new Date().toISOString().split('T')[0]}.csv`;
         a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
         toast('CSV diexport (semua kolom)','success');
     });
 }
@@ -3135,10 +3556,12 @@ function exportCSV() {
 function exportJSON() {
     getAllData().then(data => {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        a.href = url;
         a.download = `litologiku_backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
         toast('JSON diexport','success');
     });
 }
@@ -3152,9 +3575,18 @@ function importData(e) {
             const arr = JSON.parse(ev.target.result);
             if (!Array.isArray(arr)) throw new Error('Format tidak valid');
             let c = 0;
-            for (const item of arr) { try { await saveToDB(item); c++; } catch(e) {} }
+            for (const item of arr) {
+                try {
+                    // Strip ID agar IndexedDB assign ID baru, hindari konflik
+                    const { id, ...itemWithoutId } = item;
+                    itemWithoutId.timestamp = itemWithoutId.timestamp || new Date().toISOString();
+                    await saveToDB(itemWithoutId);
+                    c++;
+                } catch(err) { console.warn('Skip item:', err); }
+            }
             toast(`Berhasil import ${c} data`, 'success');
             loadDataList();
+            updateStats();
         } catch (e) { toast('Gagal import: ' + e.message, 'error'); }
     };
     reader.readAsText(f);
@@ -3178,6 +3610,12 @@ window.onload = async function() {
         updateStats();
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(i => { if (!i.value) i.value = today; });
+        // Handle hash routing dari PWA shortcuts (manifest.json)
+        const hash = window.location.hash.replace('#', '');
+        const validSections = ['home', 'beku', 'sedimen', 'metamorf', 'data', 'export', 'referensi'];
+        if (hash && validSections.includes(hash)) {
+            showSection(hash);
+        }
     } catch (e) {
         console.error('DB Error:', e);
         toast('Gagal inisialisasi database', 'error');
